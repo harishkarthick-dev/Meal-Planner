@@ -59,7 +59,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              name: "MealPlan",
+              name: "MealPlanJoy",
+              alternateName: "MealPlan",
               applicationCategory: "LifestyleApplication",
               operatingSystem: "Any",
               offers: {
@@ -74,6 +75,8 @@ export default function RootLayout({
               author: {
                 "@type": "Organization",
                 name: "MealPlan Team",
+                url: "https://mealplanners.vercel.app",
+                logo: "https://mealplanners.vercel.app/favicon.svg",
               },
             }),
           }}

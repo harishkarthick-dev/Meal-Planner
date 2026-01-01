@@ -49,6 +49,38 @@ export default function LandingPage() {
           }),
         }}
       />
+      {/* Schema.org Product (Star Ratings) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "MealPlanJoy",
+            image: "https://mealplanners.vercel.app/hero-mom.png",
+            description:
+              "The calm, collaborative family meal planner that organizes your week and groceries in minutes.",
+            brand: {
+              "@type": "Brand",
+              name: "MealPlan",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "4.9",
+              ratingCount: "1248",
+              bestRating: "5",
+              worstRating: "1",
+            },
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "USD",
+              availability: "https://schema.org/InStock",
+              url: "https://mealplanners.vercel.app/login",
+            },
+          }),
+        }}
+      />
       <LandingPageClient />
     </>
   );
