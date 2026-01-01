@@ -10,8 +10,6 @@ import {
   Loader2,
 } from "lucide-react";
 
-// import { AppShell } from "@/components/layout/AppShell"; // Removed
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,13 +37,11 @@ export default function MealsPage() {
   const [isEditorOpen, setEditorOpen] = useState(false);
   const [editingMeal, setEditingMeal] = useState<Meal | null>(null);
 
-  // Planning State
   const [planningMeal, setPlanningMeal] = useState<Meal | null>(null);
   const [isPlanDialogOpen, setPlanDialogOpen] = useState(false);
   const [planDate, setPlanDate] = useState(format(new Date(), "yyyy-MM-dd"));
   const [planType, setPlanType] = useState<MealType>("dinner");
 
-  // Auth check after all hooks
   if (authLoading || !authUser) {
     return <AuthLoadingScreen />;
   }

@@ -1,16 +1,25 @@
 {
-  "name": "Meal Planner PWA",
-  "short_name": "Meals",
+  "name": "MealPlanJoy - Family Meal Planner",
+  "short_name": "MealPlan",
+  "description": "Your family's meal plan, in one place. Real-time sync, AI nutrition, and calm organization.",
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "192x192 512x512",
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
       "type": "image/svg+xml"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#7C9885",
+  "background_color": "#FDFBF7",
   "display": "standalone",
+  "orientation": "portrait",
   "start_url": "/today",
-  "scope": "/"
+  "scope": "/",
+  "id": "/today"
 }

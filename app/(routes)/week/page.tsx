@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-// import { AppShell } from "@/components/layout/AppShell"; // Removed
 
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useRequireAuth, AuthLoadingScreen } from "@/lib/hooks/useRequireAuth";
@@ -137,7 +136,6 @@ export default function WeekPage() {
                   : "bg-white dark:bg-card border-stone-100 dark:border-stone-800 hover:border-soft-sage/30",
               )}
             >
-              {/* Date Header: Row on Mobile, Column on Desktop */}
               <div className="flex md:flex-col items-center md:items-start gap-3 md:gap-0 md:mb-4 w-16 md:w-full flex-shrink-0">
                 <span
                   className={cn(
@@ -159,10 +157,8 @@ export default function WeekPage() {
                 </div>
               </div>
 
-              {/* Vertical Divider for Mobile */}
               <div className="h-10 w-px bg-stone-100 dark:bg-stone-800 md:hidden" />
 
-              {/* Meals List */}
               <div className="flex-1 md:space-y-2 md:mt-auto text-xs w-full min-w-0">
                 {total === 0 ? (
                   <div className="text-stone-300 dark:text-stone-600 md:h-20 flex items-center md:justify-center md:border-2 md:border-dashed md:border-stone-100 md:dark:border-stone-800 md:rounded-xl md:bg-stone-50/50 md:dark:bg-stone-900/20 italic">
@@ -171,7 +167,6 @@ export default function WeekPage() {
                   </div>
                 ) : (
                   <div className="flex flex-row md:flex-col gap-2 md:gap-0 overflow-x-auto md:overflow-visible no-scrollbar">
-                    {/* Mobile: Just show counts or icons? No, let's show pills but scrollable horizontally if many */}
                     {plan?.meals?.breakfast?.length > 0 && (
                       <div className="space-y-1 min-w-[80px] md:min-w-0">
                         <span className="text-[10px] font-bold text-orange-400 block uppercase tracking-wider">

@@ -7,7 +7,6 @@ import { useTheme } from "next-themes";
 import { Moon, Sun, Monitor, LogOut, Copy, Users } from "lucide-react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-// import { AppShell } from "@/components/layout/AppShell"; // Removed
 
 import { Button } from "@/components/ui/button";
 import {

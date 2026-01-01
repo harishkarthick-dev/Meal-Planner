@@ -11,7 +11,6 @@ import {
   isSameMonth,
   isSameDay,
 } from "date-fns";
-// import { AppShell } from "@/components/layout/AppShell"; // Removed
 
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useRequireAuth, AuthLoadingScreen } from "@/lib/hooks/useRequireAuth";
@@ -35,7 +34,6 @@ export default function CalendarPage() {
   const [monthPlans, setMonthPlans] = useState<Record<string, DayPlan>>({});
   const [loading, setLoading] = useState(true);
 
-  // Generate calendar grid
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
   const calendarStart = startOfWeek(monthStart);

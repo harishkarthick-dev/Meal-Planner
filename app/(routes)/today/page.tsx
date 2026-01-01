@@ -13,10 +13,6 @@ import {
 } from "lucide-react";
 import { FloatingActionButton } from "@/components/ui/floating-action-button";
 
-// ... (existing code)
-
-// import { AppShell } from "@/components/layout/AppShell"; // Removed
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -36,7 +32,6 @@ import { useMeals } from "@/lib/hooks/useMeals";
 
 import { nutritionService } from "@/lib/services/nutrition";
 
-// MealType definition to ensure type safety in keys
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "snack", "dinner"];
 
 function TodayContent() {
@@ -45,7 +40,6 @@ function TodayContent() {
   const router = useRouter();
   const dateParam = searchParams.get("date");
 
-  // Validate date param or fallback to today
   let currentDate = new Date();
   if (dateParam) {
     const parsed = parseISO(dateParam);
@@ -77,7 +71,6 @@ function TodayContent() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { meals: familyMeals, addMeal } = useMeals();
 
-  // Now do conditional return AFTER all hooks
   if (authLoading || !authUser) {
     return <AuthLoadingScreen />;
   }

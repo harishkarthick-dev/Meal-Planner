@@ -65,7 +65,6 @@ export default function GroceryPage() {
       start = startOfWeek(now, { weekStartsOn: 1 });
       end = endOfWeek(now, { weekStartsOn: 1 });
     } else if (rangeType === "Month") {
-      // Simple month range: 1st to last day
       start = startOfMonth(now);
       end = endOfMonth(now);
     }
