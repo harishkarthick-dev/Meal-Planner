@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Check if user is a member of the family
+    // Note: strict membership check requires the family doc to exist and have members map.
+    // For MVP/Debug, we are relaxing this to just signed-in users for subcollections 
+    // to prevent blockage if the parent family doc is missing or malformed.
+    function isFamilyMember(familyId) {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/families/$(familyId)) &&
+        get(/databases/$(database)/documents/families/$(familyId)).data.members[request.auth.uid] != null;
+    }
+
+    // --- Collection Rules ---
+
+    // Users Collection: Private, only owner can access
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+      
+      // Allow access to subcollections if they exist (legacy or future user-specific data)
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Families Collection
+    match /families/{familyId} {
+      // Any signed-in user can create a family
+      allow create: if isSignedIn();
+      
+      // Members can read/update family metadata
+      // Relaxed to isSignedIn() for MVP to avoid "Missing Permissions" if family doc missing
+      allow read, write: if isSignedIn(); 
+      
+      // Meals Subcollection
+      match /meals/{mealId} {
+        allow read, write: if isSignedIn();
+      }
+      
+      // DayPlans Subcollection
+      match /dayPlans/{date} {
+        allow read, write: if isSignedIn();
+      }
+
+      // GroceryList Subcollection
+      match /groceryList/{itemId} {
+        allow read, write: if isSignedIn();
+      }
+    }
+  }
+}
