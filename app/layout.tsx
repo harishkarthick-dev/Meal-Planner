@@ -33,6 +33,9 @@ export const metadata: Metadata = {
     siteName: "MealPlan",
     type: "website",
   },
+  verification: {
+    google: "GTHUG59PIIeNd251f_82y0nAoQi2bake0r9s3NoLhok",
+  },
 };
 
 export const viewport: Viewport = {
