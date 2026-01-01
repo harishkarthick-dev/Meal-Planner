@@ -16,6 +16,16 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+
+// SEO Metadata for Landing Page
+export const metadata = {
+  title: "MealPlan - The Calm Family Meal Planner App",
+  description:
+    "Stop wondering what's for dinner. A simple, collaborative meal planner for families that syncs in real-time. Try it free.",
+  alternates: {
+    canonical: "https://mealplanners.vercel.app",
+  },
+};
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
@@ -386,7 +396,7 @@ export default function LandingPage() {
             </Link>
             <ThemeToggle />
             <Button href="/login" className="px-6 py-2 text-sm">
-              Start Free Trial
+              Start Your Free Plan
             </Button>
           </div>
 
@@ -444,7 +454,7 @@ export default function LandingPage() {
               Log In
             </Link>
             <Button href="/login" className="w-full justify-center">
-              Start Free Trial
+              Start Your Free Plan
             </Button>
           </motion.div>
         )}
@@ -466,19 +476,18 @@ export default function LandingPage() {
               variants={fadeInUp}
               className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 text-text-dark dark:text-foreground"
             >
-              Say Goodbye to <br />
+              The Calm <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-soft-sage to-dusty-rose">
-                &quot;What&apos;s for Dinner?&quot;
-              </span>{" "}
-              Stress
+                Family Meal Planner
+              </span>
             </motion.h1>
             <motion.p
               variants={fadeInUp}
               className="text-xl text-stone-500 dark:text-stone-400 mb-8 leading-relaxed max-w-lg"
             >
-              Planning family meals just got easier. Save time, reduce waste,
-              and bring joy back to your kitchen table—all in just 5 minutes a
-              week.
+              We know you want to feed your family well without the daily 5 PM
+              panic. Plan your entire week in 5 minutes, automate your grocery
+              list, and bring joy back to your kitchen table.
             </motion.p>
             <motion.div
               variants={fadeInUp}
@@ -596,8 +605,8 @@ export default function LandingPage() {
       <Section className="text-center max-w-4xl">
         <motion.div variants={fadeInUp}>
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-text-dark dark:text-foreground">
-            You Deserve a Dinnertime That{" "}
-            <span className="text-dusty-rose">Doesn’t Drain You</span>
+            Meal Planning That actually{" "}
+            <span className="text-dusty-rose">Calms the Chaos</span>
           </h2>
           <p className="text-xl text-stone-500 dark:text-stone-400 leading-relaxed mb-8">
             We know the drill. It’s 5 PM, everyone is hungry, the fridge is
@@ -618,13 +627,13 @@ export default function LandingPage() {
             variants={fadeInUp}
             className="text-soft-sage font-bold tracking-wider uppercase text-sm"
           >
-            Why Moms Love Us
+            Why Moms Love Our Planner
           </motion.span>
           <motion.h2
             variants={fadeInUp}
             className="text-4xl font-bold mt-2 text-text-dark dark:text-foreground"
           >
-            Reclaim Your Evenings
+            A Weekly Meal Planner for Real Life
           </motion.h2>
         </div>
 
@@ -633,19 +642,19 @@ export default function LandingPage() {
             delay={0.1}
             icon={Clock}
             title="Reclaim Your Time"
-            desc="Stop spending hours scrolling for recipes. Drag, drop, and done. Plan your entire week’s menu in the time it takes to drink your coffee."
+            desc="Stop the endless Pinterest scroll. Drag and drop your family favorites into the calendar. Plan 21 meals in the time it takes to brew your coffee."
           />
           <BenefitCard
             delay={0.2}
             icon={ShoppingCart}
             title="Shop in a Snap"
-            desc="Forget forgotten ingredients. We turn your meal plan into a smart grocery list automatically. One click, and you’re ready to shop."
+            desc="We turn your plan into an organized grocery list instantly. Check off items as you shop, or share with your partner so they can grab the milk."
           />
           <BenefitCard
             delay={0.3}
             icon={Smile}
-            title="Cook with Calm"
-            desc="No more last-minute panic. With a plan in hand, you walk into the kitchen with confidence. Turn on some music and actually enjoy cooking."
+            title="Cook with Confidence"
+            desc="No more last-minute panic. With a clear plan, you walk into the kitchen ready to cook. Simple, stress-free family dinners."
           />
         </div>
       </Section>
@@ -825,6 +834,76 @@ export default function LandingPage() {
           Questions Other Moms Ask
         </h2>
         <div className="space-y-6">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: [
+                  {
+                    "@type": "Question",
+                    name: "Is this easier than a paper planner?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "100%. A paper planner doesn’t make your grocery list for you, and you can’t share it instantly with your partner’s phone. Plus, this one fits in your pocket!",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Can I use my own recipes?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Absolutely! You can add your own family favorites or import them from the web. It’s your personalized cookbook.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Is there a free version?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Yes! You can start for free and use the core features forever. We also have a premium plan for power-planners who want advanced features.",
+                    },
+                  },
+                ],
+              }),
+            }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: [
+                  {
+                    "@type": "Question",
+                    name: "Is this easier than a paper planner?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "100%. A paper planner doesn’t make your grocery list for you, and you can’t share it instantly with your partner’s phone. Plus, this one fits in your pocket!",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Can I use my own recipes?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Absolutely! You can add your own family favorites or import them from the web. It’s your personalized cookbook.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Is there a free version?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Yes! You can start for free and use the core features forever. We also have a premium plan for power-planners who want advanced features.",
+                    },
+                  },
+                ],
+              }),
+            }}
+          />
           {[
             {
               q: "Is this easier than a paper planner?",

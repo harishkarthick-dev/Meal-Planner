@@ -1,4 +1,15 @@
 import { AuthForm } from "@/components/auth/AuthForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login - MealPlan",
+  description:
+    "Sign in to your MealPlan account to access your family's weekly meal plan and grocery list.",
+  alternates: {
+    canonical: "https://mealplanners.vercel.app/login",
+  },
+};
+
 import Link from "next/link";
 import { ChefHat } from "lucide-react";
 

@@ -7,7 +7,11 @@ import { AuthProvider } from "@/components/providers/AuthProvider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "MealPlan - Stop wondering what's for dinner",
+  metadataBase: new URL("https://mealplanners.vercel.app"),
+  title: {
+    default: "MealPlan - Stop wondering what's for dinner",
+    template: "%s | MealPlan",
+  },
   description:
     "Your family's meal plan, in one place. Real-time sync, AI nutrition, and calm organization.",
   icons: {
@@ -46,6 +50,31 @@ export default function RootLayout({
         className={`${inter.variable} min-h-screen bg-warm-white dark:bg-background font-sans antialiased text-text-dark dark:text-foreground`}
         suppressHydrationWarning
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              name: "MealPlan",
+              applicationCategory: "LifestyleApplication",
+              operatingSystem: "Any",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "USD",
+              },
+              description:
+                "Your family's meal plan, in one place. Real-time sync, AI nutrition, and calm organization.",
+              screenshot: "https://mealplanners.vercel.app/hero-mom.png",
+              softwareVersion: "1.0.0",
+              author: {
+                "@type": "Organization",
+                name: "MealPlan Team",
+              },
+            }),
+          }}
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
