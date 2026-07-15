@@ -1,9 +1,9 @@
-# 🍽️ Meal Planner
+# 🍽️ Plately
 
 > **Never ask "What's for dinner?" again!** Your family's new favorite meal planning companion is here. 🎉
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Test Coverage](https://img.shields.io/badge/coverage-75%25-brightgreen)](https://github.com/harishkarthick-dev/mealplan)
+[![Test Coverage](https://img.shields.io/badge/coverage-75%25-brightgreen)](https://github.com/HarishKarthickS/Plately)
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black)](https://nextjs.org)
 [![Deployed with Vercel](https://img.shields.io/badge/Deployed%20with-Vercel-black)](https://vercel.com)
 
@@ -38,8 +38,8 @@ We built this with the best tools in modern web development:
 
 ```bash
 # 1. Grab the code
-git clone https://github.com/harishkarthick-dev/mealplan.git
-cd mealplan
+git clone https://github.com/HarishKarthickS/Plately.git
+cd Plately
 
 # 2. Install the goodies
 npm install
@@ -118,7 +118,7 @@ Your code quality is protected on autopilot. Pretty neat, right?
 ## 🏗️ How It's Organized
 
 ```
-mealplan/
+Plately/
 ├── app/                    # Next.js 16 app directory (the new hotness)
 │   ├── (auth)/            # Login & signup pages
 │   ├── (onboarding)/      # Family setup flow
@@ -141,7 +141,7 @@ We love contributors! ❤️ Whether you're fixing a typo, adding a feature, or 
 ### 🛠️ How to Contribute
 
 1. **Fork the Repo** - Click that button at the top right!
-2. **Clone your Fork** - `git clone https://github.com/YOUR-USERNAME/mealplan.git`
+2. **Clone your Fork** - `git clone https://github.com/YOUR-USERNAME/Plately.git`
 3. **Install Dependencies** - `npm install` (We use standard npm)
 4. **Create a Branch** - `git checkout -b feature/amazing-idea`
 5. **Code Away!** - Make your changes.
@@ -162,7 +162,7 @@ Before submitting, please check:
 
 ### 🐛 Found a Bug?
 
-Please [open an issue](https://github.com/harishkarthick-dev/mealplan/issues) describing:
+Please [open an issue](https://github.com/HarishKarthickS/Plately/issues) describing:
 
 - What happened
 - What you expected to happen
@@ -176,7 +176,7 @@ MIT License - use it, modify it, make it yours! See [LICENSE](LICENSE) for the l
 ## 👨‍💻 Built With ❤️ By
 
 **Harish Karthick S**  
-🔗 GitHub: [@harishkarthick-dev](https://github.com/harishkarthick-dev)
+🔗 GitHub: [@HarishKarthickS](https://github.com/HarishKarthickS)
 
 _"Making meal planning less stressful, one commit at a time."_
 
@@ -195,4 +195,4 @@ Huge thanks to the amazing open-source community:
 
 **Ready to transform your family's meal planning?** Star the repo ⭐ and let's cook something great together!
 
-Questions? Ideas? Found a bug? [Open an issue](https://github.com/harishkarthick-dev/mealplan/issues) - we'd love to hear from you! 💬
+Questions? Ideas? Found a bug? [Open an issue](https://github.com/HarishKarthickS/Plately/issues) - we'd love to hear from you! 💬

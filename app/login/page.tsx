@@ -2,9 +2,9 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login - MealPlan",
+  title: "Login - Plately",
   description:
-    "Sign in to your MealPlan account to access your family's weekly meal plan and grocery list.",
+    "Sign in to your Plately account to access your family's weekly meal plan and grocery list.",
   alternates: {
     canonical: "https://mealplanners.vercel.app/login",
   },

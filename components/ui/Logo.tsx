@@ -14,7 +14,7 @@ export function Logo({ className, showText = true }: LogoProps) {
       </div>
       {showText && (
         <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-          MealPlan
+          Plately
         </span>
       )}
     </div>

@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 export const metadata: Metadata = {
   metadataBase: new URL("https://mealplanners.vercel.app"),
   title: {
-    default: "MealPlan - Stop wondering what's for dinner",
-    template: "%s | MealPlan",
+    default: "Plately - Stop wondering what's for dinner",
+    template: "%s | Plately",
   },
   description:
     "Your family's meal plan, in one place. Real-time sync, AI nutrition, and calm organization.",
@@ -21,16 +21,16 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MealPlan",
+    title: "Plately",
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
-    title: "MealPlan",
+    title: "Plately",
     description:
       "Stop wondering what's for dinner. Your family's meal plan, synchronized.",
-    siteName: "MealPlan",
+    siteName: "Plately",
     type: "website",
   },
   verification: {
@@ -59,8 +59,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              name: "MealPlanJoy",
-              alternateName: "MealPlan",
+              name: "Plately",
+              alternateName: "Plately",
               applicationCategory: "LifestyleApplication",
               operatingSystem: "Any",
               offers: {
@@ -74,7 +74,7 @@ export default function RootLayout({
               softwareVersion: "1.0.0",
               author: {
                 "@type": "Organization",
-                name: "MealPlan Team",
+                name: "Plately Team",
                 url: "https://mealplanners.vercel.app",
                 logo: "https://mealplanners.vercel.app/favicon.svg",
               },

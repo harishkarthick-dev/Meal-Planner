@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Family Meal Planner Features - AI Powered & collaborative",
+  title: "Plately - AI-Powered Family Meal Planner Features",
   description:
     "Discover the best family meal planner features: Real-time syncing, AI recipe suggestions, automated grocery lists, and drag-and-drop weekly planning.",
   alternates: {

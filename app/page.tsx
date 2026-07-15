@@ -2,7 +2,7 @@ import LandingPageClient from "@/components/landing/LandingPageClient";
 
 // SEO Metadata for Landing Page
 export const metadata = {
-  title: "MealPlan - The Calm Family Meal Planner App",
+  title: "Plately - The Calm Family Meal Planner App",
   description:
     "Stop wondering what's for dinner. A simple, collaborative meal planner for families that syncs in real-time. Try it free.",
   alternates: {
@@ -56,13 +56,13 @@ export default function LandingPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Product",
-            name: "MealPlanJoy",
+            name: "Plately",
             image: "https://mealplanners.vercel.app/hero-mom.png",
             description:
               "The calm, collaborative family meal planner that organizes your week and groceries in minutes.",
             brand: {
               "@type": "Brand",
-              name: "MealPlan",
+              name: "Plately",
             },
             aggregateRating: {
               "@type": "AggregateRating",

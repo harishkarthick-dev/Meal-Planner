@@ -49,7 +49,7 @@ export function Sidebar({
             <ChefHat className="w-5 h-5" />
           </div>
           <span className="font-bold text-lg tracking-tight text-text-dark dark:text-foreground">
-            MealPlan<span className="text-soft-sage">Joy</span>
+            Plate<span className="text-soft-sage">ly</span>
           </span>
         </Link>
       </div>

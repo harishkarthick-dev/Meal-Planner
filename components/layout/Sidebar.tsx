@@ -40,7 +40,7 @@ export function Sidebar() {
     <aside className="hidden h-screen w-64 flex-col border-r bg-card px-4 py-6 md:flex">
       <div className="mb-8 px-2">
         <h2 className="text-2xl font-bold tracking-tight text-primary">
-          Meal Planner
+          Plately
         </h2>
       </div>
       <nav className="flex-1 space-y-1">

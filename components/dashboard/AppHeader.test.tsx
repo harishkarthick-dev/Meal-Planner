@@ -52,7 +52,7 @@ describe("AppHeader", () => {
   it("renders correctly", () => {
     mockUsePathname.mockReturnValue("/dashboard");
     render(<AppHeader />);
-    expect(screen.getByText("MealPlanJoy")).toBeInTheDocument();
+    expect(screen.getByText("Plately")).toBeInTheDocument();
   });
 
   it("displays correct title for Today's Plan", () => {

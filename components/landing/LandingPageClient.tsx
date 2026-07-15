@@ -347,7 +347,7 @@ export default function LandingPageClient() {
               <ChefHat className="w-6 h-6" />
             </div>
             <span className="font-bold text-xl tracking-tight text-text-dark dark:text-white">
-              MealPlan<span className="text-soft-sage">Joy</span>
+              Plate<span className="text-soft-sage">ly</span>
             </span>
           </Link>
 
@@ -911,11 +911,11 @@ export default function LandingPageClient() {
               <ChefHat className="w-5 h-5" />
             </div>
             <span className="font-bold text-lg text-text-dark dark:text-foreground">
-              MealPlan<span className="text-soft-sage">Joy</span>
+              Plate<span className="text-soft-sage">ly</span>
             </span>
           </div>
           <div className="text-stone-400 text-sm">
-            © 2026 Meal Plan App. Crafted with ❤️ for families.
+            © 2026 Plately. Crafted with ❤️ for families.
           </div>
           <div className="flex gap-6 text-stone-400">
             <a href="#" className="hover:text-soft-sage">

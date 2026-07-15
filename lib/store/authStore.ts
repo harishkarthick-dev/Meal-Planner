@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>()(
       hasFamily: () => !!get().profile?.familyIds?.length,
     }),
     {
-      name: "mealplan-auth-storage",
+      name: "plately-auth-storage",
       partialize: (state) => ({
         activeFamilyId: state.activeFamilyId,
       }),

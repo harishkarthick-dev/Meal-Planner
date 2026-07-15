@@ -25,7 +25,7 @@ export function AppHeader() {
     if (pathname.includes("/calendar")) return "Calendar";
     if (pathname.includes("/settings")) return "Settings";
     if (pathname.includes("/grocery")) return "Grocery List";
-    return "MealPlanJoy";
+    return "Plately";
   };
 
   return (
