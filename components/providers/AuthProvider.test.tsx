@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, waitFor, screen, fireEvent } from "@testing-library/react";
 import { AuthProvider, useAuth } from "./AuthProvider";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -37,7 +37,7 @@ vi.mock("@/lib/firebase/config", () => ({
   db: {},
 }));
 
-vi.mock("@/lib/store/authStore", () => ({
+vi.mock("@/features/family/authStore", () => ({
   useAuthStore: vi.fn(),
 }));
 

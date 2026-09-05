@@ -12,6 +12,7 @@ export default defineConfig({
     include: ["**/*.test.{ts,tsx}"],
     alias: {
       "@": path.resolve(__dirname, "./"),
+      "server-only": path.resolve(__dirname, "./test/server-only-stub.ts"),
     },
     coverage: {
       provider: "v8",
@@ -24,7 +25,11 @@ export default defineConfig({
           lines: 75,
         },
       },
-      include: ["lib/**/*.{ts,tsx}", "components/**/*.{ts,tsx}"],
+      include: [
+        "lib/**/*.{ts,tsx}",
+        "components/**/*.{ts,tsx}",
+        "features/**/*.{ts,tsx}",
+      ],
       exclude: [
         "**/*.d.ts",
         "**/node_modules/**",

@@ -14,8 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { MealEditor } from "@/components/meals/MealEditor";
-import { useMeals } from "@/lib/hooks/useMeals";
-import { usePlannerActions } from "@/lib/hooks/usePlannerActions";
+import { useMeals } from "@/features/plan/useMeals";
+import { usePlannerActions } from "@/features/plan/usePlannerActions";
 import { Meal, MealType } from "@/types";
 import {
   Dialog,

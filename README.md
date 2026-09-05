@@ -23,7 +23,7 @@ Live: https://mealplanners.vercel.app
 - Styling: Tailwind CSS, Radix UI primitives, Framer Motion
 - State: Zustand (with persistence)
 - Auth & data: Firebase Authentication and Cloud Firestore
-- Nutrition/AI: USDA FoodData Central API, Google Gemini (`@google/generative-ai`)
+- Nutrition/AI: USDA FoodData Central and Google Gemini, called from a Next.js Route Handler (`/api/nutrition`) so keys stay on the server
 - PWA: `@ducanh2912/next-pwa`
 - Testing: Vitest, Testing Library, jsdom
 - Tooling: ESLint, Prettier, Husky, lint-staged
@@ -33,8 +33,9 @@ Live: https://mealplanners.vercel.app
 The front end talks directly to Firebase. Authentication and family membership are handled by
 Firebase Auth; meal plans, grocery items, and family data live in Firestore, and the UI
 subscribes to Firestore snapshots so an edit from one member shows up immediately for the rest.
-Nutrition enrichment queries the USDA API first and falls back to Gemini to interpret
-free-text meal names.
+Nutrition enrichment is handled by `app/api/nutrition`. The browser posts a meal name
+to that Route Handler; the server queries USDA FoodData Central and may ask Gemini to
+interpret the result. USDA and Gemini keys never ship to the client.
 
 ## Getting started
 
@@ -61,8 +62,8 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
-NEXT_PUBLIC_USDA_API_KEY=      # https://fdc.nal.usda.gov
-NEXT_PUBLIC_GEMINI_API_KEY=    # https://ai.google.dev
+USDA_API_KEY=                  # https://fdc.nal.usda.gov — server only
+GEMINI_API_KEY=                # https://ai.google.dev — server only
 ```
 
 ## Scripts
@@ -82,13 +83,16 @@ around 75%.
 ## Project structure
 
 ```
-app/            App Router routes (today, week, meals, calendar, grocery, settings,
-                onboarding, dashboard, login)
-components/     UI, dashboard, meals, onboarding, layout, and landing components
-lib/store/      Zustand stores
-lib/services/   Nutrition/AI service
-lib/hooks/      Data hooks (auth, meals)
-types/          Shared TypeScript types
+app/                 App Router routes (thin pages)
+app/api/nutrition    USDA + Gemini Route Handler
+features/plan        Day plans and meal library hooks
+features/grocery     Shared list
+features/family      Auth store + kitchen onboarding
+features/nutrition   Server enrichment + client search helper
+features/kitchen     Cookbook chrome (ribbon, dock, chapter nav)
+components/          Shared UI, landing, auth
+lib/                 Firebase, auth guard, utils
+types/               Shared TypeScript types
 ```
 
 ## Deployment

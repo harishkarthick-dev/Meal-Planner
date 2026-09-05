@@ -29,7 +29,7 @@ describe("AuthForm", () => {
   it("renders login form by default", () => {
     render(<AuthForm />);
 
-    expect(screen.getByText("Welcome Back")).toBeInTheDocument();
+    expect(screen.getByText("Pull up a chair")).toBeInTheDocument();
     expect(screen.getByText("Sign In")).toBeInTheDocument();
   });
 
@@ -38,7 +38,7 @@ describe("AuthForm", () => {
 
     fireEvent.click(screen.getByText("Sign up"));
 
-    expect(screen.getByText("Create an Account")).toBeInTheDocument();
+    expect(screen.getByText("Join the kitchen")).toBeInTheDocument();
     expect(screen.getByText("Create Account")).toBeInTheDocument();
   });
 
@@ -48,7 +48,7 @@ describe("AuthForm", () => {
     fireEvent.click(screen.getByText("Sign up"));
     fireEvent.click(screen.getByText("Sign in"));
 
-    expect(screen.getByText("Welcome Back")).toBeInTheDocument();
+    expect(screen.getByText("Pull up a chair")).toBeInTheDocument();
   });
 
   it("handles Google sign in", async () => {

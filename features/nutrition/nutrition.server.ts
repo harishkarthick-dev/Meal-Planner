@@ -1,30 +1,17 @@
+import "server-only";
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { NutritionData } from "@/types";
-
-export interface USDAFoodNutrient {
-  nutrientName: string;
-  value: number;
-}
-
-export interface USDAFoodItem {
-  fdcId: number;
-  description: string;
-  foodNutrients: USDAFoodNutrient[];
-}
-
-export interface USDASearchResponse {
-  foods: USDAFoodItem[];
-}
-
-export interface EnrichedMealData {
-  nutrition: NutritionData;
-  prepTime: number;
-  description: string;
-  tags: string[];
-  ingredients: string[];
-}
+import { EnrichedMealData, USDAFoodItem, USDASearchResponse } from "./types";
 
 const USDA_API_URL = "https://api.nal.usda.gov/fdc/v1/foods/search";
+
+function usdaKey() {
+  return process.env.USDA_API_KEY || process.env.NEXT_PUBLIC_USDA_API_KEY;
+}
+
+function geminiKey() {
+  return process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+}
 
 function generatePrompt(
   userQuery: string,
@@ -70,7 +57,7 @@ async function queryWithGemini(
   query: string,
   contextData: unknown,
 ): Promise<EnrichedMealData | null> {
-  const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const GEMINI_API_KEY = geminiKey();
   const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
   if (!genAI) return null;
@@ -138,8 +125,8 @@ function extractManualNutrition(food: USDAFoodItem): EnrichedMealData {
 
 export const nutritionService = {
   async searchFood(query: string): Promise<EnrichedMealData | null> {
-    const USDA_API_KEY = process.env.NEXT_PUBLIC_USDA_API_KEY;
-    const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const USDA_API_KEY = usdaKey();
+    const GEMINI_API_KEY = geminiKey();
     const genAI = GEMINI_API_KEY
       ? new GoogleGenerativeAI(GEMINI_API_KEY)
       : null;

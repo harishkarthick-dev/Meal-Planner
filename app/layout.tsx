@@ -1,10 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Manrope, Fraunces } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-fraunces",
+  axes: ["SOFT", "opsz", "WONK"],
+  style: ["normal", "italic"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://mealplanners.vercel.app"),
@@ -39,7 +45,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FDFBF7",
+  themeColor: "#F3EEE3",
 };
 
 export default function RootLayout({
@@ -50,7 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${inter.variable} min-h-screen bg-warm-white dark:bg-background font-sans antialiased text-text-dark dark:text-foreground`}
+        className={`${manrope.variable} ${fraunces.variable} min-h-screen bg-linen dark:bg-background font-sans antialiased text-ink dark:text-foreground`}
         suppressHydrationWarning
       >
         <script
@@ -70,7 +76,6 @@ export default function RootLayout({
               },
               description:
                 "Your family's meal plan, in one place. Real-time sync, AI nutrition, and calm organization.",
-              screenshot: "https://mealplanners.vercel.app/hero-mom.png",
               softwareVersion: "1.0.0",
               author: {
                 "@type": "Organization",

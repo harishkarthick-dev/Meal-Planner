@@ -13,7 +13,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase/config";
 import { UserProfile } from "@/types";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 
 interface AuthContextType {
   user: User | null;

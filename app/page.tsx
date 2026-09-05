@@ -2,9 +2,9 @@ import LandingPageClient from "@/components/landing/LandingPageClient";
 
 // SEO Metadata for Landing Page
 export const metadata = {
-  title: "Plately - The Calm Family Meal Planner App",
+  title: "Plately - A shared meal plan for real life",
   description:
-    "Stop wondering what's for dinner. A simple, collaborative meal planner for families that syncs in real-time. Try it free.",
+    "Plan the week, build one shared grocery list, and keep your household in sync with a calmer way to organize dinner.",
   alternates: {
     canonical: "https://mealplanners.vercel.app",
   },
@@ -26,7 +26,7 @@ export default function LandingPage() {
                 name: "Is this easier than a paper planner?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "100%. A paper planner doesn’t make your grocery list for you, and you can’t share it instantly with your partner’s phone. Plus, this one fits in your pocket!",
+                  text: "Yes. Plately keeps your weekly plan and grocery list together, and invited household members can see updates from their own devices.",
                 },
               },
               {
@@ -34,7 +34,7 @@ export default function LandingPage() {
                 name: "Can I use my own recipes?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Absolutely! You can add your own family favorites or import them from the web. It’s your personalized cookbook.",
+                  text: "Yes. Add the meals your household already loves, save recipes, and reuse them in future weeks.",
                 },
               },
               {
@@ -42,42 +42,10 @@ export default function LandingPage() {
                 name: "Is there a free version?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Yes! You can start for free and use the core features forever. We also have a premium plan for power-planners who want advanced features.",
+                  text: "You can create an account and start planning for free. No credit card is required to get started.",
                 },
               },
             ],
-          }),
-        }}
-      />
-      {/* Schema.org Product (Star Ratings) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: "Plately",
-            image: "https://mealplanners.vercel.app/hero-mom.png",
-            description:
-              "The calm, collaborative family meal planner that organizes your week and groceries in minutes.",
-            brand: {
-              "@type": "Brand",
-              name: "Plately",
-            },
-            aggregateRating: {
-              "@type": "AggregateRating",
-              ratingValue: "4.9",
-              ratingCount: "1248",
-              bestRating: "5",
-              worstRating: "1",
-            },
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
-              availability: "https://schema.org/InStock",
-              url: "https://mealplanners.vercel.app/login",
-            },
           }),
         }}
       />

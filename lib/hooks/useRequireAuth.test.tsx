@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useRequireAuth } from "./useRequireAuth";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import { useRouter } from "next/navigation";
 import type { Mock } from "vitest";
 
-vi.mock("@/lib/store/authStore", () => ({
+vi.mock("@/features/family/authStore", () => ({
   useAuthStore: vi.fn(),
 }));
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import { db } from "@/lib/firebase/config";
 import { GroceryItem, DayPlan, Meal } from "@/types";
 import {

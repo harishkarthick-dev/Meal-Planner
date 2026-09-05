@@ -1,932 +1,810 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion, animate } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import {
   ArrowRight,
-  Clock,
-  ShoppingCart,
-  Smile,
-  Star,
+  ArrowUpRight,
   Check,
+  Clock3,
   Menu,
-  X,
-  ChefHat,
+  Plus,
+  ShoppingBasket,
+  Sparkles,
   Users,
-  type LucideIcon,
+  UtensilsCrossed,
+  X,
 } from "lucide-react";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils/cn";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useAuth } from "@/components/providers/AuthProvider";
-import confetti from "canvas-confetti";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { cn } from "@/lib/utils/cn";
 
-// --- Animations ---
-const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+const EASE = [0.19, 1, 0.22, 1] as const;
+
+const rise: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
 };
 
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
+const stagger: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+
+const NAV = [
+  { label: "Why Plately", href: "#why" },
+  { label: "How it works", href: "#how" },
+  { label: "Questions", href: "#faq" },
+];
+
+const TICKER = [
+  "Taco Tuesdays",
+  "Sheet-pan Sundays",
+  "Leftovers, remixed",
+  "One shared list",
+  "Meatless Mondays",
+  "Weeknight 30-min",
+  "Pantry, not panic",
+  "Everyone in the loop",
+];
+
+const WEEK = [
+  {
+    day: "Mon",
+    meal: "Lemon herb pasta",
+    time: "25 min",
+    tone: "bg-[#EAF0E4]",
   },
-};
+  {
+    day: "Tue",
+    meal: "Black bean tacos",
+    time: "30 min",
+    tone: "bg-[#F6E9D6]",
+  },
+  {
+    day: "Wed",
+    meal: "Coconut lentil soup",
+    time: "35 min",
+    tone: "bg-[#E7EEEA]",
+  },
+];
 
-// --- Components ---
+const CHIPS = [
+  { label: "🍅 tomatoes", className: "left-[-3%] top-[14%]", delay: 0 },
+  { label: "🧄 garlic", className: "right-[-4%] top-[6%]", delay: 0.6 },
+  { label: "🌿 basil", className: "right-[2%] bottom-[16%]", delay: 1.2 },
+  { label: "🥥 coconut milk", className: "left-[-6%] bottom-[8%]", delay: 1.8 },
+];
 
-function Section({
-  className,
-  children,
-  id,
-}: {
-  className?: string;
-  children: React.ReactNode;
-  id?: string;
-}) {
+function handleAnchor(
+  event: React.MouseEvent<HTMLAnchorElement>,
+  href: string,
+  after?: () => void,
+) {
+  if (!href.startsWith("#")) return;
+  event.preventDefault();
+  after?.();
+  document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+  window.history.pushState(null, "", href);
+}
+
+function Wordmark({ className }: { className?: string }) {
   return (
-    <motion.section
-      id={id}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
-      variants={staggerContainer}
-      className={cn(
-        "relative py-20 px-6 md:px-12 max-w-7xl mx-auto",
-        className,
-      )}
-    >
-      {children}
-    </motion.section>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <span className="relative grid h-9 w-9 place-items-center rounded-[0.85rem] bg-[#1F3A2E] text-[#F4EEDF]">
+        <UtensilsCrossed className="h-[18px] w-[18px]" strokeWidth={2.2} />
+        <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-[#E0632E] ring-2 ring-[#F3EEE3] dark:ring-[#12201A]" />
+      </span>
+      <span className="font-display text-[1.55rem] font-semibold leading-none tracking-[-0.03em] text-[#1B3226] dark:text-[#F1ECDD]">
+        Plately
+      </span>
+    </span>
   );
 }
 
-function Button({
-  className,
-  variant = "primary",
-  children,
+function Cta({
   href,
+  children,
+  variant = "solid",
+  className,
   onClick,
 }: {
-  className?: string;
-  variant?: "primary" | "secondary" | "outline";
-  children: React.ReactNode;
   href: string;
+  children: React.ReactNode;
+  variant?: "solid" | "ghost";
+  className?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }) {
-  const variants = {
-    primary:
-      "bg-dusty-rose text-white hover:bg-dusty-rose/90 shadow-lg shadow-dusty-rose/20",
-    secondary:
-      "bg-soft-sage text-white hover:bg-soft-sage/90 shadow-lg shadow-soft-sage/20",
-    outline: "border-2 border-soft-sage text-soft-sage hover:bg-soft-sage/10",
-  };
-
   return (
     <Link
       href={href}
       onClick={onClick}
       className={cn(
-        "inline-flex items-center justify-center px-8 py-4 rounded-full font-bold transition-all transform hover:-translate-y-1 duration-200",
-        variants[variant],
+        "group inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full px-7 text-[15px] font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0632E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F3EEE3] dark:focus-visible:ring-offset-[#12201A]",
+        variant === "solid" &&
+          "bg-[#1F3A2E] text-[#F4EEDF] shadow-[0_1px_0_#2c5040,0_18px_36px_-16px_rgba(31,58,46,0.6)] hover:-translate-y-0.5 hover:bg-[#173025] dark:bg-[#E0632E] dark:text-[#1a0d06] dark:hover:bg-[#e97440]",
+        variant === "ghost" &&
+          "text-[#3a4a41] hover:text-[#1B3226] dark:text-[#C7D2C9] dark:hover:text-white",
         className,
       )}
     >
       {children}
+      <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
     </Link>
   );
 }
 
-function BenefitCard({
-  icon: Icon,
-  title,
-  desc,
-  delay,
-}: {
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  delay: number;
-}) {
+function Ticker() {
+  const row = [...TICKER, ...TICKER];
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="bg-white dark:bg-card p-8 rounded-3xl shadow-xl shadow-warm-white/50 dark:shadow-none border border-stone-100 dark:border-stone-800 hover:shadow-2xl hover:shadow-soft-sage/10 transition-shadow"
-      variants={fadeInUp}
-      whileHover={{ y: -5 }}
-    >
-      <div className="w-14 h-14 rounded-2xl bg-soft-sage/20 flex items-center justify-center text-soft-sage mb-6">
-        <Icon className="w-7 h-7" />
+    <div className="marquee-mask overflow-hidden border-y border-[#1F3A2E]/12 bg-[#1F3A2E] py-3.5 dark:border-white/10">
+      <div className="animate-marquee flex w-max items-center gap-8 whitespace-nowrap">
+        {row.map((item, i) => (
+          <span key={i} className="flex items-center gap-8">
+            <span className="font-display text-lg italic text-[#F4EEDF]">
+              {item}
+            </span>
+            <span className="text-[#E0632E]">✦</span>
+          </span>
+        ))}
       </div>
-      <h3 className="text-xl font-bold text-text-dark dark:text-foreground mb-3">
-        {title}
-      </h3>
-      <p className="text-stone-500 dark:text-stone-400 leading-relaxed">
-        {desc}
-      </p>
-    </motion.div>
-  );
-}
-
-function StepCard({
-  number,
-  title,
-  desc,
-  imageSrc,
-}: {
-  number: string;
-  title: string;
-  desc: string;
-  imageSrc?: string;
-}) {
-  return (
-    <motion.div
-      variants={fadeInUp}
-      className="flex flex-col items-center text-center p-6 relative group"
-    >
-      <div className="relative w-32 h-32 mb-6 transition-transform duration-300 group-hover:scale-105">
-        {imageSrc ? (
-          <div className="relative w-full h-full rounded-2xl overflow-hidden border-4 border-white shadow-md">
-            <Image src={imageSrc} alt={title} fill className="object-cover" />
-          </div>
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-warm-white dark:bg-stone-800 border-4 border-soft-sage flex items-center justify-center text-2xl font-bold text-soft-sage z-10 relative mx-auto mt-8">
-            {number}
-          </div>
-        )}
-        {!imageSrc && (
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-soft-sage text-white rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
-            {number}
-          </div>
-        )}
-        {imageSrc && (
-          <div className="absolute -top-3 -right-3 w-10 h-10 bg-white dark:bg-stone-800 text-soft-sage border-4 border-soft-sage rounded-full flex items-center justify-center font-bold text-lg shadow-sm z-20">
-            {number}
-          </div>
-        )}
-      </div>
-      <h3 className="text-xl font-bold text-text-dark dark:text-foreground mb-3">
-        {title}
-      </h3>
-      <p className="text-stone-500 dark:text-stone-400">{desc}</p>
-    </motion.div>
-  );
-}
-
-function TestimonialCard({
-  quote,
-  author,
-  role,
-  delay,
-  imageSrc,
-}: {
-  quote: string;
-  author: string;
-  role: string;
-  delay: number;
-  imageSrc?: string;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      variants={fadeInUp}
-      whileHover={{ scale: 1.02 }}
-      className="bg-warm-white dark:bg-card p-8 rounded-3xl border border-stone-100 dark:border-stone-800 relative"
-    >
-      <div className="text-dusty-rose text-6xl absolute -top-4 -left-2 opacity-20 font-serif">
-        &quot;
-      </div>
-      <p className="text-text-dark/80 dark:text-white/90 text-lg italic mb-6 relative z-10 leading-relaxed">
-        {quote}
-      </p>
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-full bg-muted-lavender/30 flex items-center justify-center text-muted-lavender font-bold overflow-hidden relative">
-          {imageSrc ? (
-            <Image src={imageSrc} alt={author} fill className="object-cover" />
-          ) : (
-            author[0]
-          )}
-        </div>
-        <div>
-          <div className="font-bold text-text-dark dark:text-white">
-            {author}
-          </div>
-          <div className="text-sm text-stone-500">{role}</div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function FAQItem({ question, answer }: { question: string; answer: string }) {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="bg-white dark:bg-card rounded-2xl border border-stone-100 dark:border-stone-800 overflow-hidden">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full p-6 text-left"
-      >
-        <h3 className="font-bold text-lg text-text-dark dark:text-foreground">
-          {question}
-        </h3>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          <X className="w-5 h-5 text-soft-sage rotate-45" />
-        </motion.div>
-      </button>
-      <motion.div
-        initial={false}
-        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden"
-      >
-        <p className="px-6 pb-6 text-stone-600 dark:text-stone-400">{answer}</p>
-      </motion.div>
     </div>
   );
 }
 
-function FloatingBlobs() {
+function IllustratedPlate({ className }: { className?: string }) {
   return (
-    <>
-      <motion.div
-        animate={{
-          x: [0, 100, 0],
-          y: [0, -50, 0],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute top-20 left-10 w-72 h-72 bg-soft-sage/20 rounded-full blur-3xl -z-10"
+    <svg viewBox="0 0 280 280" className={className} aria-hidden fill="none">
+      <ellipse cx="140" cy="150" rx="118" ry="108" fill="#E8D9B8" />
+      <ellipse cx="140" cy="146" rx="102" ry="92" fill="#F7F1E4" />
+      <ellipse
+        cx="140"
+        cy="146"
+        rx="72"
+        ry="64"
+        fill="#FBF7EE"
+        stroke="#D8C9A6"
       />
-      <motion.div
-        animate={{
-          x: [0, -50, 0],
-          y: [0, 100, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
-        className="absolute bottom-20 right-10 w-96 h-96 bg-dusty-rose/20 rounded-full blur-3xl -z-10"
+      <ellipse cx="128" cy="132" rx="18" ry="16" fill="#E0632E" />
+      <ellipse cx="158" cy="138" rx="16" ry="14" fill="#C45A28" />
+      <path
+        d="M96 150c18-22 42-18 58 4 8-20 28-24 40-8"
+        stroke="#5A8F6A"
+        strokeWidth="4"
+        strokeLinecap="round"
       />
-    </>
+      <circle cx="188" cy="128" r="5" fill="#5A8F6A" />
+      <ellipse cx="112" cy="168" rx="22" ry="8" fill="#E8B84A" opacity="0.9" />
+    </svg>
   );
 }
 
-function CountUp({ from, to }: { from: number; to: number }) {
-  const [count, setCount] = useState(from);
+function PlanCard() {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 34, rotate: reduce ? 0 : -1.4 }}
+      animate={{ opacity: 1, y: 0, rotate: reduce ? 0 : -1.4 }}
+      transition={{ duration: 1, delay: 0.2, ease: EASE }}
+      className="relative mx-auto w-full max-w-[540px]"
+    >
+      <IllustratedPlate className="pointer-events-none absolute -right-10 -top-16 w-40 opacity-90 lg:w-52" />
+      {!reduce &&
+        CHIPS.map((chip) => (
+          <div
+            key={chip.label}
+            style={{ animationDelay: `${chip.delay}s` }}
+            className={cn(
+              "animate-floaty absolute z-20 hidden rounded-full border border-[#e3dccb] bg-[#FBF8F0] px-3.5 py-2 text-[13px] font-semibold text-[#40503f] shadow-[0_12px_28px_-14px_rgba(31,58,46,0.5)] dark:border-white/10 dark:bg-[#1c2c24] dark:text-[#d8e0d6] lg:block",
+              chip.className,
+            )}
+          >
+            {chip.label}
+          </div>
+        ))}
 
-  useEffect(() => {
-    const controls = animate(from, to, {
-      duration: 2,
-      onUpdate: (value) => setCount(Math.floor(value)),
-      ease: "easeOut",
-    });
-    return () => controls.stop();
-  }, [from, to]);
+      <div className="pointer-events-none absolute -right-8 -top-10 hidden text-[#E0632E] lg:block">
+        <svg width="96" height="82" viewBox="0 0 96 82" fill="none" aria-hidden>
+          <path
+            d="M5 74C22 50 40 62 52 40 60 26 58 14 52 4M66 72C70 50 80 40 92 34"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
 
-  return <span>{count.toLocaleString()}</span>;
+      <div className="relative overflow-hidden rounded-[1.9rem] border border-[#e3ddcd] bg-[#FCFAF3] shadow-[0_40px_90px_-40px_rgba(31,58,46,0.55)] dark:border-white/10 dark:bg-[#16241D]">
+        <div className="flex items-center justify-between border-b border-[#ece6d6] px-6 py-5 dark:border-white/10">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#9a9683]">
+              This week
+            </p>
+            <p className="mt-1 font-display text-[22px] font-semibold leading-none tracking-[-0.02em] text-[#1F3A2E] dark:text-[#F1ECDD]">
+              Dinner, sorted.
+            </p>
+          </div>
+          <div className="flex -space-x-2.5">
+            {[
+              ["A", "bg-[#E0632E] text-white"],
+              ["J", "bg-[#7fa07f] text-[#12261a]"],
+              ["+2", "bg-[#ece6d6] text-[#6b6754]"],
+            ].map(([label, cls]) => (
+              <span
+                key={label}
+                className={cn(
+                  "grid h-9 w-9 place-items-center rounded-full border-2 border-[#FCFAF3] text-[11px] font-bold dark:border-[#16241D]",
+                  cls,
+                )}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4 p-5 sm:grid-cols-[1.4fr_0.6fr]">
+          <div className="space-y-2.5">
+            {WEEK.map((item) => (
+              <div
+                key={item.day}
+                className="group flex items-center gap-3 rounded-2xl border border-[#ece6d6] bg-white p-3 transition-colors hover:border-[#d7cdb4] dark:border-white/10 dark:bg-white/[0.03]"
+              >
+                <div
+                  className={cn(
+                    "grid h-12 w-12 shrink-0 place-items-center rounded-xl",
+                    item.tone,
+                  )}
+                >
+                  <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-[#41523f]">
+                    {item.day}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[14px] font-semibold text-[#22352b] dark:text-[#EDEAdd]">
+                    {item.meal}
+                  </p>
+                  <p className="mt-1 flex items-center gap-1 text-[11px] text-[#8b8874]">
+                    <Clock3 className="h-3 w-3" /> {item.time}
+                  </p>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-[#bcb7a2] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </div>
+            ))}
+            <div className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d5cbb2] py-3 text-[12px] font-semibold text-[#6c7663] dark:border-white/15 dark:text-[#9fb0a0]">
+              <Plus className="h-3.5 w-3.5" /> Add Thursday
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-[#1F3A2E] p-4 text-white">
+            <div className="mb-4 flex items-start justify-between">
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/50">
+                  Groceries
+                </p>
+                <p className="mt-1 font-display text-lg font-semibold">
+                  12 items
+                </p>
+              </div>
+              <ShoppingBasket className="h-5 w-5 text-[#cdd8cb]" />
+            </div>
+            <div className="space-y-2.5">
+              {["Tomatoes", "Black beans", "Coconut milk", "Basil"].map(
+                (item, i) => (
+                  <div key={item} className="flex items-center gap-2.5">
+                    <span
+                      className={cn(
+                        "grid h-4 w-4 place-items-center rounded-full border",
+                        i < 2
+                          ? "border-[#E0632E] bg-[#E0632E]"
+                          : "border-white/25",
+                      )}
+                    >
+                      {i < 2 && (
+                        <Check className="h-2.5 w-2.5 text-[#1F3A2E]" />
+                      )}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[12px]",
+                        i < 2 ? "text-white/40 line-through" : "text-white/85",
+                      )}
+                    >
+                      {item}
+                    </span>
+                  </div>
+                ),
+              )}
+            </div>
+            <p className="mt-4 border-t border-white/10 pt-3 text-[10px] leading-relaxed text-white/45">
+              Synced with your household
+            </p>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
-// --- Page ---
+function WhyCard({
+  index,
+  icon: Icon,
+  title,
+  body,
+  className,
+}: {
+  index: string;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  body: string;
+  className?: string;
+}) {
+  return (
+    <motion.article
+      variants={rise}
+      className={cn(
+        "group relative flex flex-col justify-between overflow-hidden rounded-[1.6rem] border border-[#e3ddcd] bg-[#FCFAF3] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[#d3c8ac] hover:shadow-[0_30px_60px_-38px_rgba(31,58,46,0.55)] dark:border-white/10 dark:bg-[#16241D]",
+        className,
+      )}
+    >
+      <div className="mb-10 flex items-center justify-between">
+        <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#1F3A2E]/8 text-[#1F3A2E] transition-colors group-hover:bg-[#E0632E] group-hover:text-white dark:bg-white/8 dark:text-[#cdd8cb]">
+          <Icon className="h-5 w-5" />
+        </span>
+        <span className="font-mono text-[11px] tracking-widest text-[#b3ae9b]">
+          {index}
+        </span>
+      </div>
+      <div>
+        <h3 className="font-display text-[1.6rem] font-semibold leading-tight tracking-[-0.02em] text-[#1B3226] dark:text-[#F1ECDD]">
+          {title}
+        </h3>
+        <p className="mt-3 text-[14.5px] leading-7 text-[#6b7568] dark:text-[#a6b2a7]">
+          {body}
+        </p>
+      </div>
+    </motion.article>
+  );
+}
 
 export default function LandingPageClient() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && user) {
-      router.push("/today");
-    }
+    if (!loading && user) router.push("/today");
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-warm-white dark:bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-soft-sage"></div>
-      </div>
-    );
-  }
-
-  if (user) {
-    return null;
-  }
+  if (user) return null;
 
   return (
-    <div className="min-h-screen bg-warm-white dark:bg-background font-sans text-text-dark dark:text-foreground selection:bg-soft-sage/30">
-      {/* Nav */}
-      <nav className="fixed top-0 inset-x-0 z-50 bg-white/80 dark:bg-background/80 backdrop-blur-md border-b border-stone-100 dark:border-stone-800 h-20 flex items-center">
-        <div className="max-w-7xl mx-auto w-full px-6 md:px-12 flex justify-between items-center">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-soft-sage flex items-center justify-center text-white shadow-md group-hover:rotate-6 transition-transform">
-              <ChefHat className="w-6 h-6" />
-            </div>
-            <span className="font-bold text-xl tracking-tight text-text-dark dark:text-white">
-              Plate<span className="text-soft-sage">ly</span>
-            </span>
+    <div className="relative min-h-screen overflow-hidden bg-[#F3EEE3] font-sans text-[#22352b] selection:bg-[#E0632E]/25 dark:bg-[#12201A] dark:text-[#EDEAdd]">
+      <div className="pointer-events-none fixed inset-0 z-[1] bg-grain opacity-[0.04] mix-blend-multiply dark:opacity-[0.06] dark:mix-blend-screen" />
+
+      {/* ---------- Nav ---------- */}
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-[#1F3A2E]/10 bg-[#F3EEE3]/85 backdrop-blur-xl dark:border-white/10 dark:bg-[#12201A]/85">
+        <div className="mx-auto flex h-[74px] max-w-[1200px] items-center justify-between px-5 sm:px-8">
+          <Link href="/" aria-label="Plately home">
+            <Wordmark />
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
+          <nav
+            className="hidden items-center gap-9 md:flex"
+            aria-label="Main navigation"
+          >
+            {NAV.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={(e) => handleAnchor(e, item.href)}
+                className="relative text-[14px] font-medium text-[#4c5a4f] transition-colors after:absolute after:-bottom-1.5 after:left-0 after:h-0.5 after:w-0 after:bg-[#E0632E] after:transition-all hover:text-[#1B3226] hover:after:w-full dark:text-[#b7c2b8] dark:hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-3 md:flex">
+            <ThemeToggle className="border-[#d8d0bd] bg-transparent dark:border-white/15 dark:bg-transparent" />
             <Link
-              href="#how-it-works"
-              className="text-stone-500 dark:text-stone-400 hover:text-soft-sage font-medium transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .getElementById("how-it-works")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                window.history.pushState(null, "", "#how-it-works");
-              }}
+              href="/login"
+              className="px-2 text-[14px] font-semibold text-[#3a4a41] transition-colors hover:text-[#1B3226] dark:text-[#C7D2C9] dark:hover:text-white"
             >
-              How it Works
-            </Link>
-            <Link
-              href="#testimonials"
-              className="text-stone-500 dark:text-stone-400 hover:text-soft-sage font-medium transition-colors"
-              onClick={(e) => {
-                e.preventDefault();
-                document
-                  .getElementById("testimonials")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                window.history.pushState(null, "", "#testimonials");
-              }}
-            >
-              Stories
+              Log in
             </Link>
             <Link
               href="/login"
-              className="text-stone-500 dark:text-stone-400 hover:text-soft-sage font-medium transition-colors"
+              className="rounded-full bg-[#1F3A2E] px-5 py-2.5 text-[14px] font-semibold text-[#F4EEDF] transition-colors hover:bg-[#173025] dark:bg-[#E0632E] dark:text-[#1a0d06] dark:hover:bg-[#e97440]"
             >
-              Log In
+              Start free
             </Link>
-            <ThemeToggle />
-            <Button href="/login" className="px-6 py-2 text-sm">
-              Start Your Free Plan
-            </Button>
           </div>
 
-          <div className="flex items-center gap-4 md:hidden">
-            <ThemeToggle />
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle className="border-[#d8d0bd] bg-transparent dark:border-white/15 dark:bg-transparent" />
             <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-text-dark dark:text-foreground p-2"
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              className="grid h-10 w-10 place-items-center rounded-full text-[#284034] dark:text-white"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
             >
-              {isMenuOpen ? <X /> : <Menu />}
+              {menuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute top-20 left-0 right-0 bg-white dark:bg-stone-900 border-b border-stone-100 dark:border-stone-800 p-6 flex flex-col gap-4 shadow-xl md:hidden origin-top"
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="border-t border-[#1F3A2E]/10 bg-[#F3EEE3] px-5 py-5 dark:border-white/10 dark:bg-[#12201A] md:hidden"
           >
-            <Link
-              href="#how-it-works"
-              className="py-2 text-stone-600 dark:text-stone-300"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsMenuOpen(false);
-                document
-                  .getElementById("how-it-works")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                window.history.pushState(null, "", "#how-it-works");
-              }}
-            >
-              How it Works
-            </Link>
-            <Link
-              href="#testimonials"
-              className="py-2 text-stone-600 dark:text-stone-300"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsMenuOpen(false);
-                document
-                  .getElementById("testimonials")
-                  ?.scrollIntoView({ behavior: "smooth" });
-                window.history.pushState(null, "", "#testimonials");
-              }}
-            >
-              Stories
-            </Link>
-            <Link
-              href="/login"
-              className="py-2 text-stone-600 dark:text-stone-300"
-            >
-              Log In
-            </Link>
-            <Button href="/login" className="w-full justify-center">
-              Start Your Free Plan
-            </Button>
-          </motion.div>
+            <div className="flex flex-col gap-1">
+              {NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={(e) =>
+                    handleAnchor(e, item.href, () => setMenuOpen(false))
+                  }
+                  className="rounded-xl px-3 py-3 text-[15px] font-medium hover:bg-[#1F3A2E]/[0.05] dark:hover:bg-white/[0.06]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <div className="mt-3 grid grid-cols-2 gap-3 border-t border-[#1F3A2E]/10 pt-4 dark:border-white/10">
+                <Link
+                  href="/login"
+                  className="grid min-h-11 place-items-center rounded-full border border-[#d3cab3] text-sm font-semibold dark:border-white/15"
+                >
+                  Log in
+                </Link>
+                <Link
+                  href="/login"
+                  className="grid min-h-11 place-items-center rounded-full bg-[#1F3A2E] text-sm font-semibold text-[#F4EEDF] dark:bg-[#E0632E] dark:text-[#1a0d06]"
+                >
+                  Start free
+                </Link>
+              </div>
+            </div>
+          </motion.nav>
         )}
-      </nav>
+      </header>
 
-      {/* Hero */}
-      <div className="pt-32 pb-20 md:pt-40 md:pb-32 px-6 overflow-hidden relative">
-        <FloatingBlobs />
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+      <main className="relative z-10">
+        {/* ---------- Hero ---------- */}
+        <section className="relative px-5 pb-16 pt-32 sm:px-8 sm:pt-40 lg:pb-24">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-24 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(224,99,46,0.13),transparent_70%)] blur-2xl dark:bg-[radial-gradient(circle,rgba(224,99,46,0.16),transparent_70%)]"
+          />
+          <div className="relative mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+            <motion.div initial="hidden" animate="visible" variants={stagger}>
+              <motion.span
+                variants={rise}
+                className="inline-flex items-center gap-2.5 rounded-full border border-[#1F3A2E]/15 bg-[#FCFAF3]/70 py-1.5 pl-2 pr-4 text-[12px] font-semibold text-[#3f5044] dark:border-white/15 dark:bg-white/5 dark:text-[#c1ccc2]"
+              >
+                <span className="rounded-full bg-[#E0632E] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                  New
+                </span>
+                A calmer way to answer “what’s for dinner?”
+              </motion.span>
+
+              <motion.h1
+                variants={rise}
+                className="mt-7 font-display text-[3.35rem] font-semibold leading-[0.95] tracking-[-0.035em] text-[#1B3226] dark:text-[#F1ECDD] sm:text-[4.25rem] lg:text-[5rem]"
+              >
+                Dinner,
+                <br />
+                <span className="relative inline-block italic text-[#E0632E]">
+                  actually
+                  <svg
+                    className="absolute -bottom-3 left-0 w-full text-[#E0632E]"
+                    viewBox="0 0 300 20"
+                    fill="none"
+                    aria-hidden
+                  >
+                    <path
+                      d="M3 14C60 4 120 4 180 9c40 3 80 5 116-2"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>{" "}
+                figured out.
+              </motion.h1>
+
+              <motion.p
+                variants={rise}
+                className="mt-8 max-w-lg text-[17px] leading-8 text-[#59665a] dark:text-[#a9b5aa]"
+              >
+                Plan the week, build one shared grocery list, and keep your
+                whole household on the same page — without another fiddly system
+                to babysit.
+              </motion.p>
+
+              <motion.div
+                variants={rise}
+                className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
+              >
+                <Cta href="/login">Plan your first week</Cta>
+                <Cta
+                  href="#how"
+                  variant="ghost"
+                  onClick={(e) => handleAnchor(e, "#how")}
+                >
+                  See how it works
+                </Cta>
+              </motion.div>
+
+              <motion.div
+                variants={rise}
+                className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-[#6d7a6e] dark:text-[#8ea08f]"
+              >
+                <span className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#3f7a53]" /> Free to start
+                </span>
+                <span className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#3f7a53]" /> No credit card
+                </span>
+                <span className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[#3f7a53]" /> Works offline
+                </span>
+              </motion.div>
+            </motion.div>
+
+            <PlanCard />
+          </div>
+        </section>
+
+        <Ticker />
+
+        {/* ---------- Why ---------- */}
+        <section id="why" className="scroll-mt-24 px-5 py-24 sm:px-8 lg:py-32">
           <motion.div
             initial="hidden"
-            animate="visible"
-            variants={staggerContainer}
+            whileInView="visible"
+            viewport={{ once: true, margin: "-90px" }}
+            variants={stagger}
+            className="mx-auto max-w-[1200px]"
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-soft-sage/10 text-soft-sage font-bold text-sm mb-6 tracking-wide">
-              👋 Hey Mama, welcome to stress-free dinners
-            </span>
-            <motion.h1
-              variants={fadeInUp}
-              className="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 text-text-dark dark:text-foreground"
-            >
-              The Calm <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-soft-sage to-dusty-rose">
-                Family Meal Planner
-              </span>
-            </motion.h1>
-            <motion.p
-              variants={fadeInUp}
-              className="text-xl text-stone-500 dark:text-stone-400 mb-8 leading-relaxed max-w-lg"
-            >
-              We know you want to feed your family well without the daily 5 PM
-              panic. Plan your entire week in 5 minutes, automate your grocery
-              list, and bring joy back to your kitchen table.
-            </motion.p>
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-col sm:flex-row gap-4"
-            >
-              <Button
-                href="/login"
-                onClick={(e) => {
-                  /* Optional: e.preventDefault() if we want to stay on page to see confetti */
-                  const rect = (
-                    e.target as HTMLElement
-                  ).getBoundingClientRect();
-                  const x = (rect.left + rect.width / 2) / window.innerWidth;
-                  const y = (rect.top + rect.height / 2) / window.innerHeight;
-                  confetti({
-                    origin: { x, y },
-                    particleCount: 100,
-                    spread: 70,
-                    colors: ["#8FB9AA", "#E5989B", "#FDFBF7"],
-                  });
-                }}
-              >
-                Start Your Free Week Plan{" "}
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button
-                href="#how-it-works"
-                variant="outline"
-                className="border-stone-200 text-stone-500 hover:bg-stone-50 hover:text-text-dark"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("how-it-works")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                  window.history.pushState(null, "", "#how-it-works");
-                }}
-              >
-                See How It Works
-              </Button>
-            </motion.div>
-            <motion.div
-              variants={fadeInUp}
-              className="mt-8 flex items-center gap-4 text-sm text-stone-400"
-            >
-              <div className="flex -space-x-2">
-                {[
-                  "/avatar-sarah.png",
-                  "/avatar-jessica.png",
-                  "/avatar-emily.png",
-                ].map((src, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-white overflow-hidden relative"
-                  >
-                    <Image
-                      src={src}
-                      alt="Trusted user"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-              <p>
-                Trusted by{" "}
-                <span className="font-bold text-soft-sage">
-                  <CountUp from={0} to={10000} />+
-                </span>{" "}
-                happy families
+            <motion.div variants={rise} className="mb-14 max-w-2xl">
+              <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#E0632E]">
+                Why Plately
               </p>
+              <h2 className="mt-4 font-display text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] text-[#1B3226] dark:text-[#F1ECDD] sm:text-[3.25rem]">
+                The helpful parts of planning.{" "}
+                <span className="italic text-[#4c6a58] dark:text-[#9fc0aa]">
+                  None of the busywork.
+                </span>
+              </h2>
             </motion.div>
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-soft-sage/20 rounded-[3rem] rotate-6 transform translate-x-4 translate-y-4 -z-10" />
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white aspect-[4/3]">
-              {/* Using the generated image */}
-              <Image
-                src="/hero-mom.png"
-                alt="Happy mom planning meals"
-                fill
-                className="object-cover"
-                priority
+            <div className="grid gap-5 md:grid-cols-6">
+              <WhyCard
+                index="01"
+                icon={Sparkles}
+                title="A week you can see"
+                body="Lay out breakfast, lunch, or dinner at a glance and leave the rest uncluttered. No overwhelm, just this week."
+                className="md:col-span-3"
+              />
+              <WhyCard
+                index="02"
+                icon={ShoppingBasket}
+                title="A list that writes itself"
+                body="Every planned meal rolls into one tidy grocery list you can check off from any phone at the store."
+                className="md:col-span-3"
+              />
+              <WhyCard
+                index="03"
+                icon={Users}
+                title="Shared, not shouldered"
+                body="Invite the people you live with so deciding and shopping stop landing on one person every single night."
+                className="md:col-span-2"
+              />
+              <WhyCard
+                index="04"
+                icon={UtensilsCrossed}
+                title="Ideas when you're stuck"
+                body="Out of inspiration? Ask for realistic meal ideas that fit your time, tastes, and what you already have."
+                className="md:col-span-4"
               />
             </div>
-
-            {/* Floaties */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute -bottom-6 -left-6 bg-white dark:bg-card p-4 rounded-2xl shadow-xl flex items-center gap-3"
-            >
-              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-soft-sage/20 flex items-center justify-center text-green-600 dark:text-soft-sage">
-                <Check className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="font-bold text-sm text-text-dark dark:text-foreground">
-                  Weekly Plan
-                </p>
-                <p className="text-xs text-stone-500 dark:text-stone-400">
-                  Done in 5 mins
-                </p>
-              </div>
-            </motion.div>
           </motion.div>
-        </div>
-      </div>
+        </section>
 
-      {/* Emotional Intro */}
-      <Section className="text-center max-w-4xl">
-        <motion.div variants={fadeInUp}>
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-text-dark dark:text-foreground">
-            Meal Planning That actually{" "}
-            <span className="text-dusty-rose">Calms the Chaos</span>
-          </h2>
-          <p className="text-xl text-stone-500 dark:text-stone-400 leading-relaxed mb-8">
-            We know the drill. It’s 5 PM, everyone is hungry, the fridge is
-            chaotic, and you have zero energy left to decide what to cook.
-            <br className="hidden md:block" /> You want to feed your family
-            well, but the mental load feels like a second full-time job.
-          </p>
-          <p className="text-xl font-medium text-soft-sage">
-            It doesn’t have to be this way.
-          </p>
-        </motion.div>
-      </Section>
-
-      {/* Benefits */}
-      <Section className="bg-white dark:bg-stone-900 rounded-[3rem] my-12 transition-colors">
-        <div className="text-center mb-16">
-          <motion.span
-            variants={fadeInUp}
-            className="text-soft-sage font-bold tracking-wider uppercase text-sm"
-          >
-            Why Moms Love Our Planner
-          </motion.span>
-          <motion.h2
-            variants={fadeInUp}
-            className="text-4xl font-bold mt-2 text-text-dark dark:text-foreground"
-          >
-            A Weekly Meal Planner for Real Life
-          </motion.h2>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <BenefitCard
-            delay={0.1}
-            icon={Clock}
-            title="Reclaim Your Time"
-            desc="Stop the endless Pinterest scroll. Drag and drop your family favorites into the calendar. Plan 21 meals in the time it takes to brew your coffee."
-          />
-          <BenefitCard
-            delay={0.2}
-            icon={ShoppingCart}
-            title="Shop in a Snap"
-            desc="We turn your plan into an organized grocery list instantly. Check off items as you shop, or share with your partner so they can grab the milk."
-          />
-          <BenefitCard
-            delay={0.3}
-            icon={Smile}
-            title="Cook with Confidence"
-            desc="No more last-minute panic. With a clear plan, you walk into the kitchen ready to cook. Simple, stress-free family dinners."
-          />
-        </div>
-      </Section>
-
-      {/* Features */}
-      <Section>
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl font-bold text-text-dark dark:text-foreground">
-              Designed for Real Life <br /> (and Real Moms)
-            </h2>
-
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-full bg-dusty-rose/10 flex items-center justify-center text-dusty-rose flex-shrink-0">
-                <Star className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-text-dark dark:text-foreground">
-                  Smart Recipe Importing
-                </h3>
-                <p className="text-stone-500 dark:text-stone-400">
-                  Found a recipe you love on a blog? Save it to your plan in
-                  seconds. No more lost bookmarks.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-full bg-cozy-clay/10 flex items-center justify-center text-cozy-clay flex-shrink-0">
-                <Users className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold mb-2 text-text-dark dark:text-foreground">
-                  Family Sharing
-                </h3>
-                <p className="text-stone-500 dark:text-stone-400">
-                  Sync with your partner instantly. Let them handle the store
-                  run without the &quot;what brand of milk?&quot; calls.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-4">
-              <Button href="/login" variant="secondary">
-                Check Out All Features
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-4 mt-8">
-              <div className="relative rounded-2xl h-40 w-full overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <Image
-                  src="/feature-import.png"
-                  alt="Recipe Import"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative rounded-2xl h-56 w-full overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <Image
-                  src="/feature-sharing.png"
-                  alt="Family Sharing"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div className="relative rounded-2xl h-56 w-full overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <Image
-                  src="/feature-groceries.png"
-                  alt="Pantry Tracker"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative rounded-2xl h-40 w-full overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300">
-                <Image
-                  src="/feature-mom.png"
-                  alt="Peace of Mind"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </Section>
-
-      {/* Testimonials */}
-      <Section
-        id="testimonials"
-        className="bg-warm-white dark:bg-background transition-colors"
-      >
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-text-dark dark:text-foreground">
-            Moms Who Made the Switch
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          <TestimonialCard
-            delay={0.1}
-            author="Sarah"
-            role="Mom of 3"
-            imageSrc="/avatar-sarah.png"
-            quote="I used to dread 5 PM daily. Now, I have my plan done on Sunday, and I feel like a supermom all week."
-          />
-          <TestimonialCard
-            delay={0.2}
-            author="Jessica"
-            role="Toddler Mom"
-            imageSrc="/avatar-jessica.png"
-            quote="Finally, an app that isn't complicated. It feels like it was built by someone who actually cooks for a family."
-          />
-          <TestimonialCard
-            delay={0.3}
-            author="Emily"
-            role="Working Mom"
-            imageSrc="/avatar-emily.png"
-            quote="The peace of mind I get from knowing dinner is handled? Priceless. It’s the best thing I’ve done for my sanity."
-          />
-        </div>
-      </Section>
-
-      {/* How It Works */}
-      <Section
-        id="how-it-works"
-        className="bg-white dark:bg-stone-900 rounded-[3rem] py-24 transition-colors"
-      >
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-text-dark dark:text-foreground">
-            From Chaos to Calm in 4 Steps
-          </h2>
-        </div>
-
-        <div className="grid md:grid-cols-4 gap-8 relative">
-          {/* Connector Line (Desktop) */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
-            className="hidden md:block absolute top-[2.5rem] left-16 right-16 h-1.5 bg-gradient-to-r from-soft-sage/50 to-dusty-rose/50 origin-left -z-0 rounded-full"
-          />
-
-          <StepCard
-            number="1"
-            imageSrc="/step-1.png"
-            title="Tap & Plan"
-            desc="Enter your favorites or explore our ideas into your calendar."
-          />
-          <StepCard
-            number="2"
-            imageSrc="/step-2.png"
-            title="Auto-List"
-            desc="Watch as your grocery list builds itself magically."
-          />
-          <StepCard
-            number="3"
-            imageSrc="/step-3.png"
-            title="Shop & Prep"
-            desc="Hit the store with a sorted list, or send it to your partner."
-          />
-          <StepCard
-            number="4"
-            imageSrc="/step-4.png"
-            title="Enjoy Dinner"
-            desc="Cook without stress and enjoy the extra family time."
-          />
-        </div>
-      </Section>
-
-      {/* FAQ */}
-      <Section className="max-w-3xl">
-        <h2 className="text-3xl font-bold text-center mb-12 text-text-dark dark:text-foreground">
-          Questions Other Moms Ask
-        </h2>
-        <div className="space-y-6">
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                mainEntity: [
-                  {
-                    "@type": "Question",
-                    name: "Is this easier than a paper planner?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "100%. A paper planner doesn’t make your grocery list for you, and you can’t share it instantly with your partner’s phone. Plus, this one fits in your pocket!",
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: "Can I use my own recipes?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "Absolutely! You can add your own family favorites or import them from the web. It’s your personalized cookbook.",
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: "Is there a free version?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "Yes! You can start for free and use the core features forever. We also have a premium plan for power-planners who want advanced features.",
-                    },
-                  },
-                ],
-              }),
-            }}
-          />
-          {[
-            {
-              q: "Is this easier than a paper planner?",
-              a: "100%. A paper planner doesn’t make your grocery list for you, and you can’t share it instantly with your partner’s phone. Plus, this one fits in your pocket!",
-            },
-            {
-              q: "Can I use my own recipes?",
-              a: "Absolutely! You can add your own family favorites or import them from the web. It’s your personalized cookbook.",
-            },
-            {
-              q: "Is there a free version?",
-              a: "Yes! You can start for free and use the core features forever. We also have a premium plan for power-planners who want advanced features.",
-            },
-          ].map((item, i) => (
-            <FAQItem key={i} question={item.q} answer={item.a} />
-          ))}
-        </div>
-      </Section>
-
-      {/* Final CTA */}
-      <section className="py-24 px-6 bg-soft-sage text-white text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="relative z-10 max-w-2xl mx-auto"
+        {/* ---------- How it works ---------- */}
+        <section
+          id="how"
+          className="relative scroll-mt-20 overflow-hidden bg-[#1F3A2E] px-5 py-24 text-[#F4EEDF] sm:px-8 lg:py-32"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
-            Ready for Stress-Free Dinners?
-          </h2>
-          <p className="text-xl text-white/90 mb-10">
-            Join thousands of happy moms who have taken back their evenings.
-            Setup takes less than 2 minutes.
-          </p>
-          <Button
-            href="/login"
-            className="bg-white text-soft-sage hover:bg-warm-white shadow-xl"
-          >
-            Start Your Free Week Plan
-          </Button>
-        </motion.div>
-      </section>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-24 top-0 h-80 w-80 rounded-full bg-[#E0632E]/20 blur-3xl"
+          />
+          <div className="relative mx-auto max-w-[1200px]">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={rise}
+              className="mb-16 max-w-2xl"
+            >
+              <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#f0a887]">
+                How it works
+              </p>
+              <h2 className="mt-4 font-display text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] sm:text-[3.25rem]">
+                A few minutes now.{" "}
+                <span className="italic text-[#bcd3c1]">
+                  Fewer decisions later.
+                </span>
+              </h2>
+            </motion.div>
 
-      {/* Footer */}
-      <footer className="bg-white dark:bg-background py-12 px-6 border-t border-stone-100 dark:border-stone-800">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-soft-sage flex items-center justify-center text-white">
-              <ChefHat className="w-5 h-5" />
+            <motion.ol
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-70px" }}
+              variants={stagger}
+              className="grid gap-8 md:grid-cols-3"
+            >
+              {[
+                {
+                  n: "01",
+                  t: "Add a few meals",
+                  d: "Drop in favourites, save a new recipe, or start from a suggestion. Ten minutes, tops.",
+                },
+                {
+                  n: "02",
+                  t: "Invite your household",
+                  d: "Everyone sees the same plan and can tweak it as the week inevitably changes.",
+                },
+                {
+                  n: "03",
+                  t: "Take the list to go",
+                  d: "Shop from one shared checklist, then just cook. No more “what brand of milk?” texts.",
+                },
+              ].map((step) => (
+                <motion.li key={step.n} variants={rise} className="relative">
+                  <span className="font-display text-[3.5rem] font-semibold leading-none text-[#E0632E]">
+                    {step.n}
+                  </span>
+                  <h3 className="mt-4 font-display text-[1.55rem] font-semibold tracking-[-0.02em]">
+                    {step.t}
+                  </h3>
+                  <p className="mt-3 max-w-xs text-[14.5px] leading-7 text-[#c4d0c5]">
+                    {step.d}
+                  </p>
+                </motion.li>
+              ))}
+            </motion.ol>
+          </div>
+        </section>
+
+        {/* ---------- FAQ ---------- */}
+        <section id="faq" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
+          <div className="mx-auto grid max-w-[1100px] gap-12 lg:grid-cols-[0.6fr_1.4fr]">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={rise}
+            >
+              <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-[#E0632E]">
+                Good to know
+              </p>
+              <h2 className="mt-4 font-display text-[2.4rem] font-semibold leading-[1.05] tracking-[-0.03em] text-[#1B3226] dark:text-[#F1ECDD]">
+                A few common questions.
+              </h2>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-60px" }}
+              variants={stagger}
+              className="border-t border-[#1F3A2E]/12 dark:border-white/10"
+            >
+              {[
+                [
+                  "Can I use my own meals and recipes?",
+                  "Absolutely. Add the meals your household already loves, save recipes, and reuse them in future weeks.",
+                ],
+                [
+                  "Can my partner or housemate edit the plan?",
+                  "Yes — Plately is built around a shared household. Invited members can plan and update the grocery list together in real time.",
+                ],
+                [
+                  "Does it work on my phone at the store?",
+                  "Yes. It installs as an app and works offline, so your list is right there in the aisle even without signal.",
+                ],
+                [
+                  "Is Plately really free?",
+                  "You can create an account and start planning for free. No credit card required to get going.",
+                ],
+              ].map(([q, a]) => (
+                <motion.details
+                  key={q}
+                  variants={rise}
+                  className="group border-b border-[#1F3A2E]/12 dark:border-white/10"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-left font-display text-[1.3rem] font-semibold text-[#22352b] transition-colors group-open:text-[#1B3226] hover:text-[#E0632E] dark:text-[#EDEAdd] [&::-webkit-details-marker]:hidden">
+                    {q}
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-[#1F3A2E]/20 text-[#3f5044] transition-transform duration-300 group-open:rotate-45 group-open:border-[#E0632E] group-open:text-[#E0632E] dark:border-white/20 dark:text-[#c1ccc2]">
+                      <Plus className="h-4 w-4" />
+                    </span>
+                  </summary>
+                  <p className="max-w-2xl pb-7 pr-10 text-[15px] leading-7 text-[#647063] dark:text-[#a6b2a7]">
+                    {a}
+                  </p>
+                </motion.details>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ---------- CTA ---------- */}
+        <section className="px-5 pb-10 sm:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="relative mx-auto max-w-[1200px] overflow-hidden rounded-[2.2rem] border border-[#1F3A2E]/10 bg-[#FCFAF3] px-6 py-16 text-center dark:border-white/10 dark:bg-[#16241D] sm:px-12 lg:py-20"
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 -top-16 mx-auto h-56 w-56 rounded-full bg-[#E0632E]/15 blur-3xl"
+            />
+            <p className="relative text-[12px] font-bold uppercase tracking-[0.22em] text-[#E0632E]">
+              Set the table
+            </p>
+            <h2 className="relative mx-auto mt-5 max-w-2xl font-display text-[2.6rem] font-semibold leading-[1.02] tracking-[-0.03em] text-[#1B3226] dark:text-[#F1ECDD] sm:text-[3.5rem]">
+              More time at the table.{" "}
+              <span className="italic text-[#4c6a58] dark:text-[#9fc0aa]">
+                Less at the fridge, guessing.
+              </span>
+            </h2>
+            <p className="relative mx-auto mt-5 max-w-lg text-[15.5px] leading-7 text-[#647063] dark:text-[#a6b2a7]">
+              Your first week takes just a few minutes to set up.
+            </p>
+            <div className="relative mt-9 flex justify-center">
+              <Cta href="/login">Start planning for free</Cta>
             </div>
-            <span className="font-bold text-lg text-text-dark dark:text-foreground">
-              Plate<span className="text-soft-sage">ly</span>
-            </span>
-          </div>
-          <div className="text-stone-400 text-sm">
-            © 2026 Plately. Crafted with ❤️ for families.
-          </div>
-          <div className="flex gap-6 text-stone-400">
-            <a href="#" className="hover:text-soft-sage">
-              Privacy
-            </a>
-            <a href="#" className="hover:text-soft-sage">
-              Terms
-            </a>
-            <a href="#" className="hover:text-soft-sage">
+          </motion.div>
+        </section>
+      </main>
+
+      {/* ---------- Footer ---------- */}
+      <footer className="relative z-10 px-5 py-12 sm:px-8">
+        <div className="mx-auto flex max-w-[1200px] flex-col gap-6 border-t border-[#1F3A2E]/12 pt-8 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between">
+          <Wordmark />
+          <p className="text-[13px] text-[#7a8579] dark:text-[#8b9789]">
+            © 2026 Plately · Less planning around dinner, more dinner.
+          </p>
+          <div className="flex gap-6 text-[13px] font-medium text-[#5c6a5d] dark:text-[#a6b2a7]">
+            <a
+              href="mailto:hello@plately.app"
+              className="transition-colors hover:text-[#E0632E]"
+            >
               Contact
             </a>
+            <Link
+              href="/login"
+              className="transition-colors hover:text-[#E0632E]"
+            >
+              Log in
+            </Link>
           </div>
         </div>
       </footer>

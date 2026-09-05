@@ -1,5 +1,7 @@
 import { AuthForm } from "@/components/auth/AuthForm";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { UtensilsCrossed } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Login - Plately",
@@ -10,31 +12,30 @@ export const metadata: Metadata = {
   },
 };
 
-import Link from "next/link";
-import { ChefHat } from "lucide-react";
-
 export default function LoginPage() {
   return (
-    <div className="min-h-screen grid items-center bg-warm-white dark:bg-background relative overflow-hidden">
-      {/* Background Blobs - Reused from Landing Page */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-soft-sage/20 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-dusty-rose/20 rounded-full blur-[100px] -z-10" />
+    <div className="relative min-h-screen overflow-hidden bg-linen dark:bg-background">
+      <div className="pointer-events-none absolute inset-0 bg-gingham opacity-70 dark:opacity-20" />
+      <div className="absolute left-[-12%] top-[-12%] -z-10 h-[420px] w-[420px] rounded-full bg-tomato/15 blur-[90px]" />
+      <div className="absolute bottom-[-12%] right-[-12%] -z-10 h-[420px] w-[420px] rounded-full bg-basil/20 blur-[90px]" />
 
-      <div className="w-full max-w-md mx-auto p-6">
-        <div className="flex flex-col items-center mb-8">
-          <Link href="/" className="flex items-center gap-2 group mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-soft-sage flex items-center justify-center text-white shadow-md group-hover:rotate-6 transition-transform">
-              <ChefHat className="w-7 h-7" />
-            </div>
-          </Link>
-          <AuthForm />
+      <div className="relative grid min-h-screen items-center">
+        <div className="mx-auto w-full max-w-md p-6">
+          <div className="mb-8 flex flex-col items-center">
+            <Link href="/" className="group mb-8 flex items-center gap-2">
+              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-forest text-linen shadow-[0_8px_0_#c45a28] transition-transform group-hover:-rotate-6">
+                <UtensilsCrossed className="h-7 w-7" />
+              </div>
+            </Link>
+            <AuthForm />
 
-          <Link
-            href="/"
-            className="mt-8 text-sm text-stone-500 hover:text-soft-sage transition-colors"
-          >
-            ← Back to Home
-          </Link>
+            <Link
+              href="/"
+              className="mt-8 text-sm text-muted-foreground transition-colors hover:text-tomato"
+            >
+              ← Back to the kitchen
+            </Link>
+          </div>
         </div>
       </div>
     </div>

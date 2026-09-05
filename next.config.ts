@@ -13,6 +13,7 @@ const pwaConfig = withPWA({
 });
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["@google/generative-ai"],
   images: {
     remotePatterns: [
       {

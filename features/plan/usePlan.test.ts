@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { usePlan } from "./usePlan";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import type { Mock } from "vitest";
 import { MealEntry } from "@/types";
 import { doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
@@ -20,7 +20,7 @@ vi.mock("@/lib/firebase/config", () => ({
   db: {},
 }));
 
-vi.mock("@/lib/store/authStore", () => ({
+vi.mock("@/features/family/authStore", () => ({
   useAuthStore: vi.fn(),
 }));
 

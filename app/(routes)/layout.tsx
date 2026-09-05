@@ -1,16 +1,15 @@
 "use client";
 
-import { AppHeader } from "@/components/dashboard/AppHeader";
-import { BottomNav } from "@/components/dashboard/BottomNav";
-
-import { Sidebar } from "@/components/dashboard/Sidebar";
+import { KitchenHeader } from "@/features/kitchen/KitchenHeader";
+import { KitchenDock } from "@/features/kitchen/KitchenDock";
+import { CookbookRibbon } from "@/features/kitchen/CookbookRibbon";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, activeFamilyId } = useAuth(); // Ensure useAuth() returns activeFamilyId or get it from store
+  const { user, loading, activeFamilyId } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,8 +24,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-warm-white dark:bg-background text-soft-sage">
-        <Loader2 className="w-8 h-8 animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-linen text-tomato">
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -34,21 +33,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-warm-white dark:bg-background overflow-hidden flex-col md:flex-row">
-      {/* Sidebar - Desktop */}
-      <div className="hidden md:block w-64 flex-shrink-0 h-full">
-        <Sidebar className="w-full h-full" />
-      </div>
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-linen text-ink dark:bg-background dark:text-foreground">
+      <div className="pointer-events-none absolute inset-0 bg-gingham opacity-70 dark:opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-grain opacity-[0.035] mix-blend-multiply dark:opacity-[0.08] dark:mix-blend-screen" />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full min-w-0 relative">
-        <AppHeader />
+      <div className="relative z-10 flex min-h-screen flex-col">
+        <CookbookRibbon />
+        <KitchenHeader />
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth pb-20 md:pb-8">
-          <div className="max-w-6xl mx-auto w-full">{children}</div>
+        <main className="flex-1 overflow-y-auto scroll-smooth px-4 pb-24 pt-6 md:px-8 md:pb-10">
+          <div className="mx-auto w-full max-w-6xl">{children}</div>
         </main>
 
-        <BottomNav />
+        <KitchenDock />
       </div>
     </div>
   );

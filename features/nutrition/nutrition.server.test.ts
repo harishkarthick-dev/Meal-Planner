@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { nutritionService, USDAFoodItem } from "./nutrition";
+import { nutritionService } from "./nutrition.server";
+import type { USDAFoodItem } from "./types";
 import type { Mock } from "vitest";
 
-// Mock GoogleGenerativeAI
 const mockGenerateContent = vi.fn();
 const mockGetGenerativeModel = vi.fn(() => ({
   generateContent: mockGenerateContent,
@@ -18,7 +18,6 @@ vi.mock("@google/generative-ai", () => {
   };
 });
 
-// Mock global fetch
 const globalFetch = global.fetch;
 
 describe("nutritionService", () => {
@@ -36,7 +35,6 @@ describe("nutritionService", () => {
   });
 
   it("extractManualNutrition parses USDA data correctly", () => {
-    // ... existing test
     const mockUSDAFood: USDAFoodItem = {
       fdcId: 123,
       description: "Test Food",
@@ -58,9 +56,8 @@ describe("nutritionService", () => {
   });
 
   it("searchFood should fetch data and call Gemini if key is present", async () => {
-    // ... existing test
-    process.env.NEXT_PUBLIC_USDA_API_KEY = "test-usda-key";
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY = "test-gemini-key";
+    process.env.USDA_API_KEY = "test-usda-key";
+    process.env.GEMINI_API_KEY = "test-gemini-key";
 
     (global.fetch as Mock).mockResolvedValue({
       ok: true,
@@ -95,14 +92,15 @@ describe("nutritionService", () => {
   });
 
   it("returns null if USDA key is missing", async () => {
+    delete process.env.USDA_API_KEY;
     delete process.env.NEXT_PUBLIC_USDA_API_KEY;
     const result = await nutritionService.searchFood("Apple");
     expect(result).toBeNull();
   });
 
   it("handles USDA API Error by falling back to Gemini", async () => {
-    process.env.NEXT_PUBLIC_USDA_API_KEY = "test-usda-key";
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY = "test-gemini-key";
+    process.env.USDA_API_KEY = "test-usda-key";
+    process.env.GEMINI_API_KEY = "test-gemini-key";
 
     (global.fetch as Mock).mockResolvedValue({
       ok: false,
@@ -116,12 +114,12 @@ describe("nutritionService", () => {
 
     const result = await nutritionService.searchFood("Apple");
     expect(mockGenerateContent).toHaveBeenCalled();
-    expect(result).toBeDefined(); // Falls back to Gemini
+    expect(result).toBeDefined();
   });
 
   it("handles empty USDA results by falling back to Gemini if available", async () => {
-    process.env.NEXT_PUBLIC_USDA_API_KEY = "test-usda-key";
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY = "test-gemini-key";
+    process.env.USDA_API_KEY = "test-usda-key";
+    process.env.GEMINI_API_KEY = "test-gemini-key";
 
     (global.fetch as Mock).mockResolvedValue({
       ok: true,
@@ -134,30 +132,13 @@ describe("nutritionService", () => {
       },
     });
 
-    // searchFood calls queryWithGemini if USDA result empty is handled logic in searchFood?
-    // Wait, source says: if (apiFoods.length > 0) return extractManualNutrition... return null.
-    // But `try { ... } catch { if (genAI) return queryWithGemini }`.
-    // The `if (apiFoods > 0)` block doesn't throw, it returns null.
-    // Wait, `searchFood` code:
-    /*
-    if (genAI) {
-      const aiResult = await this.queryWithGemini(query, apiFoods);
-      if (aiResult) {
-        return aiResult;
-      }
-    }
-    */
-    // It calls gemini regardless of USDA emptiness if genAI exists, passing apiFoods as context.
-    // Correct.
-
     await nutritionService.searchFood("Apple");
     expect(mockGenerateContent).toHaveBeenCalled();
   });
 
   it("handles malformed JSON from Gemini by retrying", async () => {
-    process.env.NEXT_PUBLIC_GEMINI_API_KEY = "test-gemini-key";
+    process.env.GEMINI_API_KEY = "test-gemini-key";
 
-    // Mock first attempt failure (malformed), second success
     mockGenerateContent
       .mockResolvedValueOnce({
         response: { text: () => "Invalid JSON" },
@@ -176,7 +157,8 @@ describe("nutritionService", () => {
   });
 
   it("returns manual extraction if Gemini is missing/fails and USDA has data", async () => {
-    process.env.NEXT_PUBLIC_USDA_API_KEY = "test-usda-key";
+    process.env.USDA_API_KEY = "test-usda-key";
+    delete process.env.GEMINI_API_KEY;
     delete process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
     (global.fetch as Mock).mockResolvedValue({

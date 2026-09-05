@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { JoinFamilyForm } from "./JoinFamilyForm";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import { useRouter } from "next/navigation";
 import { getDocs, updateDoc } from "firebase/firestore";
 
 import type { Mock } from "vitest";
 
 // Mocks
-vi.mock("@/lib/store/authStore", () => ({
+vi.mock("@/features/family/authStore", () => ({
   useAuthStore: vi.fn(),
 }));
 

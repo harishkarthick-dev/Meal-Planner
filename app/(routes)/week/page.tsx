@@ -103,11 +103,11 @@ export default function WeekPage() {
     <div className="mx-auto max-w-7xl pb-12">
       <header className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-text-dark dark:text-foreground">
-            This Week
+          <h1 className="font-display text-4xl font-semibold tracking-tight">
+            This week
           </h1>
-          <p className="text-stone-500 dark:text-stone-400">
-            {format(weekDays[0], "MMMM d")} -{" "}
+          <p className="mt-1 text-muted-foreground">
+            {format(weekDays[0], "MMMM d")} —{" "}
             {format(weekDays[6], "MMMM d, yyyy")}
           </p>
         </div>
@@ -132,15 +132,15 @@ export default function WeekPage() {
               className={cn(
                 "flex md:flex-col items-center md:items-start p-3 md:p-4 rounded-xl md:rounded-2xl border transition-all hover:shadow-lg cursor-pointer min-h-[80px] md:h-full md:min-h-[200px] gap-3 md:gap-0",
                 isToday
-                  ? "bg-soft-sage/10 border-soft-sage/50 ring-1 ring-soft-sage/50"
-                  : "bg-white dark:bg-card border-stone-100 dark:border-stone-800 hover:border-soft-sage/30",
+                  ? "recipe-card ring-1 ring-tomato/40"
+                  : "recipe-card hover:border-tomato/30",
               )}
             >
               <div className="flex md:flex-col items-center md:items-start gap-3 md:gap-0 md:mb-4 w-16 md:w-full flex-shrink-0">
                 <span
                   className={cn(
                     "text-[10px] md:text-xs font-bold uppercase tracking-wider block md:mb-1 order-2 md:order-1",
-                    isToday ? "text-soft-sage" : "text-stone-400",
+                    isToday ? "text-tomato" : "text-muted-foreground",
                   )}
                 >
                   {format(day, "EEE")}
@@ -149,8 +149,8 @@ export default function WeekPage() {
                   className={cn(
                     "text-lg md:text-2xl font-bold md:mx-auto md:w-10 md:h-10 flex items-center justify-center rounded-full order-1 md:order-2",
                     isToday
-                      ? "md:bg-soft-sage md:text-white md:shadow-md text-soft-sage"
-                      : "text-text-dark dark:text-foreground",
+                      ? "md:bg-tomato md:text-white md:shadow-md text-tomato"
+                      : "text-foreground",
                   )}
                 >
                   {format(day, "d")}

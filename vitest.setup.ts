@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom";
 import { beforeAll, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
+
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({

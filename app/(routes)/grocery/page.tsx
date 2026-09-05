@@ -1,15 +1,8 @@
 "use client";
 
-import { useGrocery } from "@/lib/hooks/useGrocery";
+import { useGrocery } from "@/features/grocery/useGrocery";
 import { useState } from "react";
-import {
-  Plus,
-  Trash2,
-  ShoppingCart,
-  RefreshCw,
-  Check,
-  Calendar,
-} from "lucide-react";
+import { Plus, Trash2, RefreshCw, Check, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
@@ -87,9 +80,8 @@ export default function GroceryPage() {
   return (
     <div className="space-y-6 pb-24 md:pb-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-text-dark dark:text-foreground flex items-center gap-2">
-          <ShoppingCart className="w-6 h-6 text-soft-sage" />
-          Grocery List
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          Market list
         </h1>
 
         <div className="flex items-center gap-2">
@@ -122,7 +114,7 @@ export default function GroceryPage() {
             size="sm"
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="text-soft-sage border-soft-sage/30 hover:bg-soft-sage/10 whitespace-nowrap"
+            className="text-tomato border-tomato/30 hover:bg-tomato/10 whitespace-nowrap"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -158,7 +150,7 @@ export default function GroceryPage() {
               <Button
                 type="submit"
                 disabled={!newItemName.trim()}
-                className="bg-soft-sage text-white"
+                className="bg-tomato text-white"
               >
                 Add Item
               </Button>
@@ -171,7 +163,7 @@ export default function GroceryPage() {
       <div className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-50">
         <Button
           size="icon"
-          className="h-14 w-14 rounded-full shadow-lg bg-soft-sage hover:bg-soft-sage/90 text-white"
+          className="h-14 w-14 rounded-full shadow-lg bg-tomato hover:bg-tomato/90 text-white"
           onClick={() => setIsAddDialogOpen(true)}
         >
           <Plus className="h-6 w-6" />
@@ -191,7 +183,7 @@ export default function GroceryPage() {
           {pendingItems.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between p-3 bg-white dark:bg-card rounded-xl border border-stone-100 dark:border-stone-800 shadow-sm transition-all hover:shadow-md group"
+              className="flex items-center justify-between p-3 recipe-card group"
             >
               <div
                 className="flex items-center gap-3 flex-1 cursor-pointer"
@@ -227,7 +219,7 @@ export default function GroceryPage() {
                   className="flex items-center gap-3 flex-1 cursor-pointer"
                   onClick={() => toggleItem(item.id, false)}
                 >
-                  <div className="w-5 h-5 rounded-full bg-soft-sage flex items-center justify-center flex-shrink-0 text-white">
+                  <div className="w-5 h-5 rounded-full bg-tomato flex items-center justify-center flex-shrink-0 text-white">
                     <Check className="w-3 h-3" />
                   </div>
                   <span className="text-stone-400 line-through decoration-stone-400">

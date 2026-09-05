@@ -24,13 +24,13 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { usePlan } from "@/lib/hooks/usePlan";
+import { usePlan } from "@/features/plan/usePlan";
 import { useRequireAuth, AuthLoadingScreen } from "@/lib/hooks/useRequireAuth";
 import { cn } from "@/lib/utils/cn";
 import { MealType, Meal } from "@/types";
-import { useMeals } from "@/lib/hooks/useMeals";
+import { useMeals } from "@/features/plan/useMeals";
 
-import { nutritionService } from "@/lib/services/nutrition";
+import { searchFood } from "@/features/nutrition/searchFood";
 
 const MEAL_TYPES: MealType[] = ["breakfast", "lunch", "snack", "dinner"];
 
@@ -100,9 +100,7 @@ function TodayContent() {
 
       if (!finalMealId) {
         try {
-          const enrichedData = await nutritionService.searchFood(
-            quickAddName.trim(),
-          );
+          const enrichedData = await searchFood(quickAddName.trim());
           if (enrichedData) {
             nutritionToAdd = enrichedData.nutrition;
             prepTimeToAdd = enrichedData.prepTime;
@@ -153,15 +151,19 @@ function TodayContent() {
 
   return (
     <div className="mx-auto max-w-3xl pb-24">
-      <header className="mb-6 flex items-center justify-between">
+      <header className="mb-8 flex items-center justify-between">
         <Button variant="ghost" size="icon" onClick={() => changeDate(-1)}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div className="text-center">
-          <h1 className="text-2xl font-bold tracking-tight">{displayDate}</h1>
-          <p className="text-sm text-muted-foreground">
-            {dateKey === format(new Date(), "yyyy-MM-dd") ? "Today" : "Plan"}
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-tomato">
+            {dateKey === format(new Date(), "yyyy-MM-dd")
+              ? "Tonight's spread"
+              : "A day's spread"}
           </p>
+          <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight">
+            {displayDate}
+          </h1>
         </div>
         <Button variant="ghost" size="icon" onClick={() => changeDate(1)}>
           <ChevronRight className="h-5 w-5" />
@@ -174,7 +176,7 @@ function TodayContent() {
           return (
             <section key={type} className="space-y-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold capitalize text-primary">
+                <h2 className="font-display text-xl font-semibold capitalize text-forest dark:text-basil">
                   {type}
                 </h2>
                 <Dialog
@@ -255,8 +257,8 @@ function TodayContent() {
               {loading ? (
                 <div className="h-20 rounded-xl border border-dashed bg-muted/20 animate-pulse" />
               ) : meals.length === 0 ? (
-                <div className="rounded-xl border border-dashed p-4 text-center text-sm text-muted-foreground bg-muted/5">
-                  No meals planned
+                <div className="rounded-[1.2rem] border border-dashed border-forest/20 bg-paper/60 p-4 text-center text-sm italic text-muted-foreground dark:bg-card/40">
+                  Nothing plated yet
                 </div>
               ) : (
                 <div className="grid gap-3">
@@ -264,8 +266,8 @@ function TodayContent() {
                     <Card
                       key={meal.id}
                       className={cn(
-                        "transition-all group",
-                        meal.completed && "opacity-60 bg-muted/50",
+                        "recipe-card transition-all group",
+                        meal.completed && "opacity-60",
                       )}
                     >
                       <CardContent className="p-4 flex items-center gap-3">

@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, type Mock } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Sidebar } from "./Sidebar";
+import { CookbookNav } from "./CookbookNav";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { usePathname } from "next/navigation";
 
-// Mock hooks
 const mockSignOut = vi.fn();
 const mockUser = {
   displayName: "John Doe",
@@ -26,7 +25,11 @@ vi.mock("next/image", () => ({
   ),
 }));
 
-describe("Sidebar", () => {
+vi.mock("@/components/ui/ThemeToggle", () => ({
+  ThemeToggle: () => <button type="button">Theme</button>,
+}));
+
+describe("CookbookNav", () => {
   it("renders navigation items", () => {
     (usePathname as unknown as Mock).mockReturnValue("/today");
     (useAuth as unknown as Mock).mockReturnValue({
@@ -34,26 +37,26 @@ describe("Sidebar", () => {
       signOut: mockSignOut,
     });
 
-    render(<Sidebar />);
+    render(<CookbookNav />);
 
-    expect(screen.getByText("Today's Plan")).toBeInTheDocument();
-    expect(screen.getByText("Weekly Plan")).toBeInTheDocument();
+    expect(screen.getByText("Today's table")).toBeInTheDocument();
+    expect(screen.getByText("This week")).toBeInTheDocument();
   });
 
-  it("highlights active route", () => {
+  it("marks the active chapter", () => {
     (usePathname as unknown as Mock).mockReturnValue("/today");
     (useAuth as unknown as Mock).mockReturnValue({
       user: mockUser,
       signOut: mockSignOut,
     });
 
-    render(<Sidebar />);
+    render(<CookbookNav />);
 
-    const todayLink = screen.getByText("Today's Plan").closest("a");
-    const weekLink = screen.getByText("Weekly Plan").closest("a");
+    const todayLink = screen.getByText("Today's table").closest("a");
+    const weekLink = screen.getByText("This week").closest("a");
 
-    expect(todayLink).toHaveClass("bg-soft-sage/10");
-    expect(weekLink).not.toHaveClass("bg-soft-sage/10");
+    expect(todayLink).toHaveAttribute("aria-current", "page");
+    expect(weekLink).not.toHaveAttribute("aria-current");
   });
 
   it("calls onClose when a link is clicked", () => {
@@ -64,9 +67,9 @@ describe("Sidebar", () => {
       signOut: mockSignOut,
     });
 
-    render(<Sidebar onClose={onClose} />);
+    render(<CookbookNav onClose={onClose} />);
 
-    fireEvent.click(screen.getByText("Weekly Plan"));
+    fireEvent.click(screen.getByText("This week"));
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -77,7 +80,7 @@ describe("Sidebar", () => {
       signOut: mockSignOut,
     });
 
-    render(<Sidebar />);
+    render(<CookbookNav />);
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("john@example.com")).toBeInTheDocument();
     expect(screen.getByRole("img")).toHaveAttribute(
@@ -86,18 +89,15 @@ describe("Sidebar", () => {
     );
   });
 
-  it("renders default user icon if no photo", () => {
+  it("renders default cook icon if no photo", () => {
     (usePathname as unknown as Mock).mockReturnValue("/today");
     (useAuth as unknown as Mock).mockReturnValue({
       user: { ...mockUser, photoURL: null },
       signOut: mockSignOut,
     });
 
-    render(<Sidebar />);
-    // User icon is rendered when no photo.
-    // We can check if img is NOT present or check for generic icon (SVG)
-    const img = screen.queryByRole("img");
-    expect(img).not.toBeInTheDocument();
+    render(<CookbookNav />);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
   it("calls signOut when logout button is clicked", () => {
@@ -107,9 +107,8 @@ describe("Sidebar", () => {
       signOut: mockSignOut,
     });
 
-    render(<Sidebar />);
-    const logoutBtn = screen.getByTitle("Sign Out");
-    fireEvent.click(logoutBtn);
+    render(<CookbookNav />);
+    fireEvent.click(screen.getByTitle("Sign Out"));
     expect(mockSignOut).toHaveBeenCalled();
   });
 });

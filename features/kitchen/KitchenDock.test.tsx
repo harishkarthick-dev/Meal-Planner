@@ -1,47 +1,50 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { BottomNav } from "./BottomNav";
+import { KitchenDock } from "./KitchenDock";
 
-// Mock next/navigation
 const mockUsePathname = vi.fn();
 vi.mock("next/navigation", () => ({
   usePathname: () => mockUsePathname(),
 }));
 
-describe("BottomNav", () => {
+describe("KitchenDock", () => {
   it("renders all navigation items", () => {
     mockUsePathname.mockReturnValue("/today");
-    render(<BottomNav />);
+    render(<KitchenDock />);
 
     expect(screen.getByText("Today")).toBeInTheDocument();
-    expect(screen.getByText("Week")).toBeInTheDocument();
-    expect(screen.getByText("List")).toBeInTheDocument();
+    expect(screen.getAllByText("Week").length).toBeGreaterThan(0);
+    expect(screen.getByText("Market")).toBeInTheDocument();
   });
 
   it("highlights the active route", () => {
     mockUsePathname.mockReturnValue("/today");
-    render(<BottomNav />);
+    render(<KitchenDock />);
 
     const todayLink = screen.getByText("Today").closest("a");
-    const weekLink = screen.getByText("Week").closest("a");
-
-    expect(todayLink).toHaveClass("text-soft-sage");
-    expect(weekLink).toHaveClass("text-stone-400");
+    expect(todayLink).toHaveAttribute("aria-current", "page");
+    expect(screen.getByText("Week").closest("a")).not.toHaveAttribute(
+      "aria-current",
+    );
   });
 
   it("handles week route activation", () => {
     mockUsePathname.mockReturnValue("/week");
-    render(<BottomNav />);
+    render(<KitchenDock />);
 
-    const weekLink = screen.getByText("Week").closest("a");
-    expect(weekLink).toHaveClass("text-soft-sage");
+    expect(screen.getByText("Week").closest("a")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("handles grocery route activation", () => {
     mockUsePathname.mockReturnValue("/grocery");
-    render(<BottomNav />);
+    render(<KitchenDock />);
 
-    const listLink = screen.getByText("List").closest("a");
-    expect(listLink).toHaveClass("text-soft-sage");
+    expect(screen.getByText("Market").closest("a")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 });

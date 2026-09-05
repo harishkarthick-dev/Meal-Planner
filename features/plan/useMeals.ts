@@ -12,7 +12,7 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
-import { useAuthStore } from "@/lib/store/authStore";
+import { useAuthStore } from "@/features/family/authStore";
 import { Meal } from "@/types";
 
 export function useMeals() {

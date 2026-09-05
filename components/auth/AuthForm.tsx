@@ -76,8 +76,8 @@ export function AuthForm() {
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-text-dark dark:text-foreground">
-          {isLogin ? "Welcome Back" : "Create an Account"}
+        <h1 className="font-display text-3xl font-semibold tracking-tight">
+          {isLogin ? "Pull up a chair" : "Join the kitchen"}
         </h1>
         <p className="text-stone-500 dark:text-stone-400">
           {isLogin
